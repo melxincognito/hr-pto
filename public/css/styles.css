@@ -223,3 +223,8 @@ table tbody tr:nth-child(even) {
     padding: 0.5rem 0.75rem;
   }
 }
+
+/* Update Policy */
+.savePolicy {
+  width: 100%;
+}

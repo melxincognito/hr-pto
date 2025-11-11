@@ -14,7 +14,9 @@ async function loadEmployeePTO() {
   const table = document.querySelector("#historyTable tbody");
   table.innerHTML = "";
   data.history.forEach((row) => {
-    table.innerHTML += `<tr><td>${row.date}</td><td>${row.hours_used}</td></tr>`;
+    table.innerHTML += `<tr><td>${row.date.slice(0, 10)}</td><td>${
+      row.hours_used
+    }</td></tr>`;
   });
 }
 

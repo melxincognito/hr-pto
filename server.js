@@ -152,41 +152,53 @@ app.post(
 );
 
 // PTO Summary
-app.get(
-  "/api/admin/summary",
-  /* ensureAdmin,*/ async (req, res) => {
-    const [employees] = await db.query(
-      "SELECT id, full_name, start_date FROM users WHERE role='employee'"
+app.get("/api/admin/summary", async (req, res) => {
+  const [employees] = await db.query(
+    "SELECT id, full_name, start_date, total_pto_allowed, carry_over FROM users WHERE role='employee'"
+  );
+
+  const [policies] = await db.query(
+    "SELECT * FROM policy ORDER BY years_of_service ASC"
+  );
+
+  const summary = [];
+
+  for (const emp of employees) {
+    const years = Math.floor(
+      (Date.now() - new Date(emp.start_date)) / (1000 * 60 * 60 * 24 * 365)
     );
-    const [policies] = await db.query("SELECT * FROM policy");
 
-    const summary = [];
+    // Find applicable policy based on years of service
+    const policy =
+      policies.find((p) => years >= p.years_of_service) || policies[0];
 
-    for (const emp of employees) {
-      const years = Math.floor(
-        (Date.now() - new Date(emp.start_date)) / (1000 * 60 * 60 * 24 * 365)
-      );
-      const policy =
-        policies.find((p) => years >= p.years_of_service) || policies[0];
+    // Use manual override if it exists, otherwise policy days
+    let total_allowed = emp.total_pto_allowed ?? policy.days_allowed;
 
-      const [usedRows] = await db.query(
-        "SELECT COUNT(*) AS used FROM pto WHERE user_id = ?",
-        [emp.id]
-      );
-      const used = usedRows[0].used;
-      let total_allowed = emp.total_pto_allowed ?? policy.days_allowed;
-      const remaining = Math.max(total_allowed - used, 0);
-
-      summary.push({
-        full_name: emp.full_name,
-        total_allowed,
-        used,
-        remaining,
-      });
+    // Include carry over (max 1)
+    if (emp.carry_over > 0) {
+      total_allowed += Math.min(emp.carry_over, 1);
     }
-    res.json(summary);
+
+    // PTO used (current year)
+    const [usedRows] = await db.query(
+      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE())",
+      [emp.id]
+    );
+
+    const used = usedRows[0].used;
+    const remaining = Math.max(total_allowed - used, 0);
+
+    summary.push({
+      full_name: emp.full_name,
+      total_allowed,
+      used,
+      remaining,
+    });
   }
-);
+
+  res.json(summary);
+});
 
 // Upcoming PTO
 app.get(

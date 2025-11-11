@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard - HR PTO</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="navbar">
+      <h2>Admin Dashboard</h2>
+      <button id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn" data-tab="employees">Employees</button>
+      <button class="tab-btn" data-tab="pto">PTO Entries</button>
+      <button class="tab-btn" data-tab="summary">PTO Summary</button>
+      <button class="tab-btn" data-tab="upcoming">Upcoming PTO</button>
+      <button class="tab-btn" data-tab="policy">PTO Policy</button>
+    </div>
+
+    <div id="content">
+      <!-- EMPLOYEES -->
+      <div id="employees" class="tab-content">
+        <h3>Employees</h3>
+        <form id="addEmployeeForm">
+          <input type="text" id="full_name" placeholder="Full Name" required />
+          <input type="text" id="username" placeholder="Username" required />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <input type="date" id="start_date" required />
+          <button type="submit">Add Employee</button>
+        </form>
+        <table id="employeeTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Start Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- PTO -->
+      <div id="pto" class="tab-content hidden">
+        <h3>Add PTO Entry</h3>
+        <form id="addPtoForm">
+          <select id="pto_user"></select>
+          <input type="date" id="pto_date" required />
+          <input type="number" id="pto_hours" value="8" required />
+          <button type="submit">Add PTO</button>
+        </form>
+      </div>
+
+      <!-- SUMMARY -->
+      <div id="summary" class="tab-content hidden">
+        <h3>PTO Summary</h3>
+        <table id="summaryTable">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Total Allowed</th>
+              <th>Used</th>
+              <th>Remaining</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- UPCOMING -->
+      <div id="upcoming" class="tab-content hidden">
+        <h3>Upcoming PTO</h3>
+        <table id="upcomingTable">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- POLICY -->
+      <div id="policy" class="tab-content hidden">
+        <h3>PTO Policy</h3>
+        <table id="policyTable">
+          <thead>
+            <tr>
+              <th>Years of Service</th>
+              <th>Days Allowed</th>
+              <th>Notes</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>

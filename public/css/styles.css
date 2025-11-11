@@ -101,3 +101,8 @@ form button:hover,
 button:hover {
   background-color: #2563eb;
 }
+#overview,
+#pto-history,
+#current-pto-policy {
+  margin-left: 10px;
+}

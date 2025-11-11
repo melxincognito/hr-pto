@@ -7,7 +7,7 @@ async function loadEmployeePTO() {
   const res = await fetch("/api/employee/summary");
   const data = await res.json();
 
-  document.getElementById("total").textContent = data.total_allowed;
+  document.getElementById("total").textContent = data.total_pto_allowed;
   document.getElementById("used").textContent = data.used;
   document.getElementById("remaining").textContent = data.remaining;
 

@@ -226,11 +226,12 @@ app.get(
     const userId = req.session.user.id;
 
     const [userRows] = await db.query(
-      "SELECT start_date, carry_over FROM users WHERE id = ?",
+      "SELECT start_date, carry_over, total_pto_allowed FROM users WHERE id = ?",
       [userId]
     );
     const user = userRows[0];
     const startDate = user.start_date;
+    const total_pto_allowed = user.total_pto_allowed;
 
     const today = new Date();
     const years = Math.floor((today - startDate) / (1000 * 60 * 60 * 24 * 365));
@@ -253,7 +254,7 @@ app.get(
     );
     const used = usedRows[0].used;
 
-    const remaining = Math.max(total_allowed - used, 0);
+    const remaining = Math.max(total_pto_allowed - used, 0);
 
     // PTO history (all years)
     const [history] = await db.query(
@@ -261,7 +262,7 @@ app.get(
       [userId]
     );
 
-    res.json({ total_allowed, used, remaining, history });
+    res.json({ total_allowed, used, remaining, history, total_pto_allowed });
   }
 );
 

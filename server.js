@@ -83,7 +83,7 @@ app.get("/api/employee/pto", ensureAuth, async (req, res) => {
 
 app.get(
   "/api/admin/pto",
-  /* ensureAdmin, */ async (req, res) => {
+  /* ensureAdmin,*/ async (req, res) => {
     const [rows] = await db.query(
       "SELECT p.id, u.full_name, p.date, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date ASC"
     );
@@ -105,7 +105,7 @@ app.listen(PORT, () =>
 // ADMIN ROUTES
 app.get(
   "/api/admin/employees",
-  /* ensureAdmin, */ async (req, res) => {
+  /* ensureAdmin,*/ async (req, res) => {
     const [rows] = await db.query(
       "SELECT id, full_name, username, start_date FROM users WHERE role='employee'"
     );
@@ -114,33 +114,30 @@ app.get(
 );
 
 //COMMENTED OUT ENSURE ADMIN FOR NOW, TAKE OFF WHEN IT'S RUNNING CORRECTLY AND YOU HAVE YOUR USERNAME AND PASSWORD SET UP
-app.post(
-  "/api/admin/employees",
-  /* ensureAdmin, */ async (req, res) => {
-    const { full_name, username, password, start_date } = req.body;
-    const hashed = await bcrypt.hash(password, 10);
-    const clean_date = new Date(start_date).toISOString().split("T")[0];
+app.post("/api/admin/employees" /* ensureAdmin,*/, async (req, res) => {
+  const { full_name, username, password, start_date } = req.body;
+  const hashed = await bcrypt.hash(password, 10);
+  const clean_date = new Date(start_date).toISOString().split("T")[0];
 
-    try {
-      await db.query(
-        "INSERT INTO users (full_name, username, password, role, start_date) VALUES (?, ?, ?, 'employee', ?)",
+  try {
+    await db.query(
+      "INSERT INTO users (full_name, username, password, role, start_date) VALUES (?, ?, ?, 'employee', ?)",
 
-        [full_name, username, hashed, clean_date]
-      );
-      res.sendStatus(201);
-    } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
-    }
+      [full_name, username, hashed, clean_date]
+    );
+    res.sendStatus(201);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
-);
+});
 
 // Add PTO Entry
 app.post(
   "/api/admin/pto",
-  /* ensureAdmin, */ async (req, res) => {
+  /* ensureAdmin,*/ async (req, res) => {
     const { user_id, date, hours_used } = req.body;
-    const admin_id = req.session.user.id;
+    const admin_id = 3; //req.session.user.id; <- this is the original code it wasn't sending I just added my own ID as a temp fix. I might just get rid of the approved by column all together.
     try {
       await db.query(
         "INSERT INTO pto (user_id, date, hours_used, approved_by) VALUES (?, ?, ?, ?)",
@@ -157,7 +154,7 @@ app.post(
 // PTO Summary
 app.get(
   "/api/admin/summary",
-  /* ensureAdmin, */ async (req, res) => {
+  /* ensureAdmin,*/ async (req, res) => {
     const [employees] = await db.query(
       "SELECT id, full_name, start_date FROM users WHERE role='employee'"
     );
@@ -177,7 +174,7 @@ app.get(
         [emp.id]
       );
       const used = usedRows[0].used;
-      const total_allowed = policy.days_allowed;
+      let total_allowed = emp.total_pto_allowed ?? policy.days_allowed;
       const remaining = Math.max(total_allowed - used, 0);
 
       summary.push({
@@ -187,7 +184,6 @@ app.get(
         remaining,
       });
     }
-
     res.json(summary);
   }
 );
@@ -195,7 +191,7 @@ app.get(
 // Upcoming PTO
 app.get(
   "/api/admin/upcoming",
-  /* ensureAdmin, */ async (req, res) => {
+  /* ensureAdmin,*/ async (req, res) => {
     const [rows] = await db.query(
       "SELECT u.full_name, p.date FROM pto p JOIN users u ON p.user_id = u.id WHERE p.date >= CURDATE() ORDER BY p.date ASC"
     );
@@ -287,11 +283,13 @@ async function updateCarryOvers() {
     ]);
   }
 }
-updateCarryOvers(); // call on startup
 
+/* FIND BETTER PLACE TO UPDATE THE CARRY OVERS. THIS WAS ADDING IT ON EVERY STARTUP. 
+updateCarryOvers(); // call on startup
+*/
 app.put(
   "/api/admin/policy/:id",
-  /* ensureAdmin, */ async (req, res) => {
+  /* ensureAdmin,*/ async (req, res) => {
     const { id } = req.params;
     const { days_allowed, notes } = req.body;
     try {

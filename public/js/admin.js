@@ -101,7 +101,10 @@ async function loadUpcoming() {
   const tbody = document.querySelector("#upcomingTable tbody");
   tbody.innerHTML = "";
   data.forEach((pto) => {
-    tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date}</td></tr>`;
+    tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
+      0,
+      10
+    )}</td></tr>`;
   });
 }
 

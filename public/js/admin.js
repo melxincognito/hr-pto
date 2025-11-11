@@ -24,7 +24,9 @@ async function loadEmployees() {
   select.innerHTML = "";
 
   data.forEach((emp) => {
-    tbody.innerHTML += `<tr><td>${emp.full_name}</td><td>${emp.username}</td><td>${emp.start_date}</td></tr>`;
+    tbody.innerHTML += `<tr><td>${emp.full_name}</td><td>${
+      emp.username
+    }</td><td>${emp.start_date.slice(0, 10)}</td></tr>`;
     select.innerHTML += `<option value="${emp.id}">${emp.full_name}</option>`;
   });
 }

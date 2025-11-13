@@ -71,6 +71,23 @@ app.post("/api/login", async (req, res) => {
 app.get("/api/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login.html"));
 });
+/*
+// Fallback redirect
+app.get(/.*/ /*, (req, res) => {
+  if (!req.session || !req.session.user) {
+    console.log("No session found — redirecting to login");
+    return res.redirect("/login.html");
+  }
+
+  if (req.session.user.role === "admin") {
+    console.log("Redirecting admin to dashboard");
+    return res.redirect("/admin.html");
+  } else {
+    console.log("Redirecting employee to dashboard");
+    return res.redirect("/employee.html");
+  }
+});
+*/
 
 // Example protected routes
 app.get("/api/employee/pto", ensureAuth, async (req, res) => {
@@ -81,40 +98,27 @@ app.get("/api/employee/pto", ensureAuth, async (req, res) => {
   res.json(rows);
 });
 
-app.get(
-  "/api/admin/pto",
-  /* ensureAdmin,*/ async (req, res) => {
-    const [rows] = await db.query(
-      "SELECT p.id, u.full_name, p.date, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date ASC"
-    );
-    res.json(rows);
-  }
-);
-/*
-// Fallback redirect
-app.get("*", (req, res) => {
-  if (!req.session.user) return res.redirect("/login.html");
-  if (req.session.user.role === "admin") res.redirect("/admin.html");
-  else res.redirect("/employee.html");
+app.get("/api/admin/pto", ensureAdmin, async (req, res) => {
+  const [rows] = await db.query(
+    "SELECT p.id, u.full_name, p.date, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date ASC"
+  );
+  res.json(rows);
 });
-*/
+
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
 
 // ADMIN ROUTES
-app.get(
-  "/api/admin/employees",
-  /* ensureAdmin,*/ async (req, res) => {
-    const [rows] = await db.query(
-      "SELECT id, full_name, username, start_date FROM users WHERE role='employee'"
-    );
-    res.json(rows);
-  }
-);
+app.get("/api/admin/employees", ensureAdmin, async (req, res) => {
+  const [rows] = await db.query(
+    "SELECT id, full_name, username, start_date FROM users WHERE role='employee'"
+  );
+  res.json(rows);
+});
 
 //COMMENTED OUT ENSURE ADMIN FOR NOW, TAKE OFF WHEN IT'S RUNNING CORRECTLY AND YOU HAVE YOUR USERNAME AND PASSWORD SET UP
-app.post("/api/admin/employees" /* ensureAdmin,*/, async (req, res) => {
+app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
   const { full_name, username, password, start_date } = req.body;
   const hashed = await bcrypt.hash(password, 10);
   const clean_date = new Date(start_date).toISOString().split("T")[0];

@@ -101,10 +101,32 @@ async function loadUpcoming() {
   const tbody = document.querySelector("#upcomingTable tbody");
   tbody.innerHTML = "";
   data.forEach((pto) => {
+    console.log(pto.id);
     tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
       0,
       10
-    )}</td></tr>`;
+    )}</td>
+      <td>
+        <button class="delete-btn" data-id="${pto.id}">X</button>
+      </td>
+    </tr>`;
+  });
+
+  document.querySelectorAll(".delete-btn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (confirm("Are you sure you want to delete this PTO entry?")) {
+        const res = await fetch(`/api/admin/pto/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          alert("PTO entry deleted!");
+          loadPtoHistory(); // reload updated table
+        } else {
+          alert("Error deleting PTO entry.");
+        }
+      }
+    });
   });
 }
 

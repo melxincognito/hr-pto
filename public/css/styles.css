@@ -229,3 +229,18 @@ table tbody tr:nth-child(even) {
 .savePolicy {
   width: 100%;
 }
+
+/* employee summary section admin */
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  width: 100%;
+}
+.delete-btn:hover {
+  background-color: #b02a37;
+}

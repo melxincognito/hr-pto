@@ -201,15 +201,12 @@ app.get("/api/admin/summary", async (req, res) => {
 });
 
 // Upcoming PTO
-app.get(
-  "/api/admin/upcoming",
-  /* ensureAdmin,*/ async (req, res) => {
-    const [rows] = await db.query(
-      "SELECT u.full_name, p.date FROM pto p JOIN users u ON p.user_id = u.id WHERE p.date >= CURDATE() ORDER BY p.date ASC"
-    );
-    res.json(rows);
-  }
-);
+app.get("/api/admin/upcoming", ensureAdmin, async (req, res) => {
+  const [rows] = await db.query(
+    "SELECT u.full_name, p.date FROM pto p JOIN users u ON p.user_id = u.id WHERE p.date >= CURDATE() ORDER BY p.date ASC"
+  );
+  res.json(rows);
+});
 
 // PTO Policies (read-only for now)
 app.get("/api/policy", ensureAuth, async (req, res) => {
@@ -300,23 +297,20 @@ async function updateCarryOvers() {
 /* FIND BETTER PLACE TO UPDATE THE CARRY OVERS. THIS WAS ADDING IT ON EVERY STARTUP. 
 updateCarryOvers(); // call on startup
 */
-app.put(
-  "/api/admin/policy/:id",
-  /* ensureAdmin,*/ async (req, res) => {
-    const { id } = req.params;
-    const { days_allowed, notes } = req.body;
-    try {
-      await db.query(
-        "UPDATE policy SET days_allowed = ?, notes = ? WHERE id = ?",
-        [days_allowed, notes, id]
-      );
-      res.sendStatus(200);
-    } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
-    }
+app.put("/api/admin/policy/:id", ensureAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { days_allowed, notes } = req.body;
+  try {
+    await db.query(
+      "UPDATE policy SET days_allowed = ?, notes = ? WHERE id = ?",
+      [days_allowed, notes, id]
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
-);
+});
 
 // Run daily to check for employee anniversaries
 cron.schedule("0 0 * * *", async () => {

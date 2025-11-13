@@ -117,7 +117,6 @@ app.get("/api/admin/employees", ensureAdmin, async (req, res) => {
   res.json(rows);
 });
 
-//COMMENTED OUT ENSURE ADMIN FOR NOW, TAKE OFF WHEN IT'S RUNNING CORRECTLY AND YOU HAVE YOUR USERNAME AND PASSWORD SET UP
 app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
   const { full_name, username, password, start_date } = req.body;
   const hashed = await bcrypt.hash(password, 10);
@@ -137,23 +136,20 @@ app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
 });
 
 // Add PTO Entry
-app.post(
-  "/api/admin/pto",
-  /* ensureAdmin,*/ async (req, res) => {
-    const { user_id, date, hours_used } = req.body;
-    const admin_id = 3; //req.session.user.id; <- this is the original code it wasn't sending I just added my own ID as a temp fix. I might just get rid of the approved by column all together.
-    try {
-      await db.query(
-        "INSERT INTO pto (user_id, date, hours_used, approved_by) VALUES (?, ?, ?, ?)",
-        [user_id, date, hours_used, admin_id]
-      );
-      res.sendStatus(201);
-    } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
-    }
+app.post("/api/admin/pto", ensureAdmin, async (req, res) => {
+  const { user_id, date, hours_used } = req.body;
+  const admin_id = 3; //req.session.user.id; <- this is the original code it wasn't sending I just added my own ID as a temp fix. I might just get rid of the approved by column all together.
+  try {
+    await db.query(
+      "INSERT INTO pto (user_id, date, hours_used, approved_by) VALUES (?, ?, ?, ?)",
+      [user_id, date, hours_used, admin_id]
+    );
+    res.sendStatus(201);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
-);
+});
 
 // PTO Summary
 app.get("/api/admin/summary", async (req, res) => {

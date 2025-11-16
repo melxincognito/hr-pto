@@ -1,6 +1,7 @@
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await fetch("/api/logout");
   window.location.href = "/login.html";
+  window.sessionStorage.clear();
 });
 // MOBILE MENU TOGGLE
 document.getElementById("hamburgerBtn").addEventListener("click", () => {
@@ -10,8 +11,8 @@ document.getElementById("hamburgerBtn").addEventListener("click", () => {
 // MOBILE LOGOUT
 document.getElementById("logoutMobile").addEventListener("click", async () => {
   await fetch("/api/logout");
-  window.localStorage.clear();
   window.location.href = "/login.html";
+  window.sessionStorage.clear();
 });
 
 async function loadEmployeePTO() {

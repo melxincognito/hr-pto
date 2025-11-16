@@ -13,9 +13,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   const data = await res.json();
 
   if (data.success) {
-    if (data.role === "admin") window.location.href = "/admin.html";
-    else window.location.href = "/employee.html";
+    if (data.role === "admin") {
+      window.location.href = "/admin.html";
+    } else {
+      window.location.href = "/employee.html";
+    }
   } else {
+    window.location.href = "/login.html";
     document.getElementById("error").textContent = data.error;
   }
 });

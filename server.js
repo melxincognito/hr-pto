@@ -66,8 +66,16 @@ app.post("/api/login", async (req, res) => {
 app.get("/api/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login.html"));
 });
+
 /*
 // Fallback redirect
+
+const user = JSON.parse(sessionStorage.getItem("user"));
+
+if (!user || !user.id) {
+  window.location.href = "/login.html";
+}
+
 app.get(/.*/ /*, (req, res) => {
   if (!req.session || !req.session.user) {
     console.log("No session found — redirecting to login");

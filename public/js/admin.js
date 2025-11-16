@@ -1,4 +1,5 @@
 // UNIVERSAL TAB SWITCHING
+
 function showTab(tabName) {
   document.querySelectorAll(".tab-content").forEach((c) => {
     c.classList.add("hidden");
@@ -36,7 +37,7 @@ document.querySelectorAll(".mobile-tab-btn").forEach((btn) => {
 // MOBILE LOGOUT
 document.getElementById("logoutMobile").addEventListener("click", async () => {
   await fetch("/api/logout");
-  window.localStorage.clear();
+  window.sessionStorage.clear();
   window.location.href = "/login.html";
 });
 

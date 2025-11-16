@@ -232,35 +232,21 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
   const userId = req.session.user.id;
 
   const [userRows] = await db.query(
-    "SELECT start_date, carry_over, total_pto_allowed FROM users WHERE id = ?",
+    "SELECT start_date, total_pto_allowed FROM users WHERE id = ?",
     [userId]
   );
   const user = userRows[0];
-  const startDate = user.start_date;
   const total_pto_allowed = user.total_pto_allowed;
-
-  const today = new Date();
-  const years = Math.floor((today - startDate) / (1000 * 60 * 60 * 24 * 365));
-
-  // Get applicable PTO policy
-  const [policies] = await db.query(
-    "SELECT * FROM policy ORDER BY years_of_service ASC"
-  );
-  const policy =
-    policies.find((p) => years >= p.years_of_service) || policies[0];
-  let total_allowed = policy.days_allowed;
-
-  // Include carried-over days (max 1)
-  if (user.carry_over > 0) total_allowed += Math.min(user.carry_over, 1);
 
   // PTO used this current year only
   const [usedRows] = await db.query(
     "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE())",
     [userId]
   );
+
   const used = usedRows[0].used;
 
-  const remaining = Math.max(total_pto_allowed - used, 0);
+  const remaining = total_pto_allowed - used;
 
   // PTO history (all years)
   const [history] = await db.query(

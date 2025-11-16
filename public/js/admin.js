@@ -16,7 +16,6 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 // DESKTOP LOGOUT
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await fetch("/api/logout");
-  window.localStorage.clear();
   window.sessionStorage.clear();
   window.location.href = "/login.html";
 });
@@ -80,8 +79,11 @@ document
 
     if (res.ok) {
       alert("Employee added successfully!");
-
-      loadEmployees();
+      document.getElementById("full_name").value = "";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("start_date").value = "";
+      await loadEmployees(), loadSummary();
     } else {
       alert("Error adding employee.");
     }
@@ -104,6 +106,9 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
 
   if (res.ok) {
     alert("PTO entry added!");
+    document.getElementById("pto_date").value = "";
+    document.getElementById("pto_hours").value = 8;
+    await loadSummary(), loadUpcoming();
   } else {
     alert("Error adding PTO entry.");
   }
@@ -180,7 +185,7 @@ async function loadUpcoming() {
         });
         if (res.ok) {
           alert("PTO entry deleted!");
-          loadPtoHistory(); // reload updated table
+          await loadUpcoming(), loadSummary();
         } else {
           alert("Error deleting PTO entry.");
         }
@@ -220,8 +225,10 @@ async function loadPolicies() {
         body: JSON.stringify({ days_allowed: days, notes }),
       });
 
-      if (res.ok) alert("Policy updated!");
-      else alert("Error updating policy");
+      if (res.ok) {
+        alert("Policy updated!");
+        await loadPolicies();
+      } else alert("Error updating policy");
     });
   });
 
@@ -277,6 +284,7 @@ async function loadPolicies() {
 
       if (res.ok) {
         alert("Policy updated!");
+        await loadPolicies();
       } else alert("Error updating policy");
     });
   });

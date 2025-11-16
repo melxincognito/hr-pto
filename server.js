@@ -124,7 +124,7 @@ app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO users (full_name, username, password, role, start_date) VALUES (?, ?, ?, 'employee', ?)",
+      "INSERT INTO users (full_name, username, password, role, start_date, total_pto_allowed) VALUES (?, ?, ?, 'employee', ?, 5)",
 
       [full_name, username, hashed, clean_date]
     );
@@ -275,39 +275,64 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
 
   res.json({ total_allowed, used, remaining, history, total_pto_allowed });
 });
-
 async function updateCarryOvers() {
   const [users] = await db.query(
-    "SELECT id, start_date FROM users WHERE role='employee'"
+    "SELECT id, start_date, last_carry_year FROM users WHERE role='employee'"
   );
 
-  for (const user of users) {
-    const [pto] = await db.query(
-      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE()) - 1",
-      [user.id]
-    );
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1; // 1–12
+  const currentDay = today.getDate();
 
+  for (const user of users) {
+    const start = new Date(user.start_date);
+    const annivMonth = start.getMonth() + 1;
+    const annivDay = start.getDate();
+
+    // 1. Only process if today is their anniversary
+    if (annivMonth !== currentMonth || annivDay !== currentDay) {
+      continue;
+    }
+
+    // 2. Don’t apply twice within the same year
+    if (user.last_carry_year === currentYear) {
+      continue;
+    }
+
+    // 3. Compute last year’s usage
     const [policies] = await db.query(
       "SELECT * FROM policy ORDER BY years_of_service ASC"
     );
-    const years = Math.floor(
-      (Date.now() - new Date(user.start_date)) / (1000 * 60 * 60 * 24 * 365)
-    );
-    const policy =
-      policies.find((p) => years >= p.years_of_service) || policies[0];
-    const total = policy.days_allowed;
-    const unused = Math.max(total - pto[0].used, 0);
 
-    // carry over only 1 day if they had unused days
+    const yearsWorked = Math.floor(
+      (today - start) / (1000 * 60 * 60 * 24 * 365)
+    );
+
+    const policy =
+      policies.find((p) => yearsWorked >= p.years_of_service) || policies[0];
+
+    const totalAllowed = policy.days_allowed;
+
+    // PTO used last year
+    const [pto] = await db.query(
+      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
+      [user.id, currentYear - 1]
+    );
+
+    const usedLastYear = pto[0].used;
+    const unused = Math.max(totalAllowed - usedLastYear, 0);
+
     const carry = unused >= 1 ? 1 : 0;
-    await db.query("UPDATE users SET carry_over = ? WHERE id = ?", [
-      carry,
-      user.id,
-    ]);
+
+    // 4. Apply carry-over
+    await db.query(
+      "UPDATE users SET carry_over = ?, last_carry_year = ? WHERE id = ?",
+      [carry, currentYear, user.id]
+    );
   }
 }
 
-//FIND BETTER PLACE TO UPDATE THE CARRY OVERS. THIS WAS ADDING IT ON EVERY STARTUP.
 updateCarryOvers(); // call on startup
 
 app.put("/api/admin/policy/:id", ensureAdmin, async (req, res) => {

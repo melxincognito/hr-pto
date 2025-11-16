@@ -175,11 +175,6 @@ app.get("/api/admin/summary", async (req, res) => {
     // Use manual override if it exists, otherwise policy days
     let total_allowed = emp.total_pto_allowed ?? policy.days_allowed;
 
-    // Include carry over (max 1)
-    if (emp.carry_over > 0) {
-      total_allowed += Math.min(emp.carry_over, 1);
-    }
-
     // PTO used (current year)
     const [usedRows] = await db.query(
       "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE())",
@@ -275,14 +270,16 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
 
   res.json({ total_allowed, used, remaining, history, total_pto_allowed });
 });
+
+// updates carry overs and updates PTO based on anniversary year
 async function updateCarryOvers() {
   const [users] = await db.query(
-    "SELECT id, start_date, last_carry_year FROM users WHERE role='employee'"
+    "SELECT id, start_date, carry_over, last_carry_year, last_policy_update_year FROM users WHERE role='employee'"
   );
 
   const today = new Date();
   const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth() + 1; // 1–12
+  const currentMonth = today.getMonth() + 1;
   const currentDay = today.getDate();
 
   for (const user of users) {
@@ -290,50 +287,79 @@ async function updateCarryOvers() {
     const annivMonth = start.getMonth() + 1;
     const annivDay = start.getDate();
 
-    // 1. Only process if today is their anniversary
-    if (annivMonth !== currentMonth || annivDay !== currentDay) {
-      continue;
-    }
-
-    // 2. Don’t apply twice within the same year
-    if (user.last_carry_year === currentYear) {
-      continue;
-    }
-
-    // 3. Compute last year’s usage
-    const [policies] = await db.query(
-      "SELECT * FROM policy ORDER BY years_of_service ASC"
-    );
+    // Skip employees whose anniversary is NOT today
+    if (annivMonth !== currentMonth || annivDay !== currentDay) continue;
 
     const yearsWorked = Math.floor(
       (today - start) / (1000 * 60 * 60 * 24 * 365)
     );
 
-    const policy =
-      policies.find((p) => yearsWorked >= p.years_of_service) || policies[0];
-
-    const totalAllowed = policy.days_allowed;
-
-    // PTO used last year
-    const [pto] = await db.query(
-      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
-      [user.id, currentYear - 1]
+    // ============================
+    //      1. GET POLICY TIER
+    // ============================
+    const [policies] = await db.query(
+      "SELECT * FROM policy ORDER BY years_of_service ASC"
     );
 
-    const usedLastYear = pto[0].used;
-    const unused = Math.max(totalAllowed - usedLastYear, 0);
+    // Choose correct PTO policy tier based on years worked
 
-    const carry = unused >= 1 ? 1 : 0;
+    const allowedDays = policies[yearsWorked].days_allowed;
+    console.log("days allowed: " + allowedDays);
+    console.log("years worked: " + yearsWorked);
+    console.log(policies[yearsWorked]);
 
-    // 4. Apply carry-over
-    await db.query(
-      "UPDATE users SET carry_over = ?, last_carry_year = ? WHERE id = ?",
-      [carry, currentYear, user.id]
-    );
+    // ============================
+    //      2. APPLY CARRY OVER
+    // ============================
+
+    let carryOver = 0;
+
+    // Only allow once per year
+    if (user.last_carry_year !== currentYear) {
+      // PTO used last year
+      const [ptoUsed] = await db.query(
+        "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
+        [user.id, currentYear - 1]
+      );
+
+      const usedLastYear = ptoUsed[0].used;
+
+      const unused = Math.max(allowedDays - usedLastYear, 0);
+
+      carryOver = unused > 0 ? 1 : 0;
+    }
+
+    // ============================
+    // 3. UPDATE USER ALLOWED PTO
+    // ============================
+
+    // Only update PTO tier once per year
+    const shouldUpdatePolicy = user.last_policy_update_year !== currentYear;
+
+    if (shouldUpdatePolicy || user.last_carry_year !== currentYear) {
+      const newTotalAllowed = allowedDays + carryOver;
+
+      await db.query(
+        `UPDATE users 
+         SET total_pto_allowed = ?, 
+             carry_over = ?, 
+             last_carry_year = ?, 
+             last_policy_update_year = ?
+         WHERE id = ?`,
+        [newTotalAllowed, carryOver, currentYear, currentYear, user.id]
+      );
+
+      console.log(
+        `🎉 Updated PTO for user ${user.id}: ${allowedDays} + carry ${carryOver}`
+      );
+    }
   }
 }
-
-updateCarryOvers(); // call on startup
+// cron job to run carry overs every day at midnight
+cron.schedule("0 0 * * *", () => {
+  console.log("⏰ Running daily PTO carry-over check...");
+  updateCarryOvers().catch((err) => console.error("Carry-over error:", err));
+});
 
 app.put("/api/admin/policy/:id", ensureAdmin, async (req, res) => {
   const { id } = req.params;
@@ -350,54 +376,12 @@ app.put("/api/admin/policy/:id", ensureAdmin, async (req, res) => {
   }
 });
 
-// Run daily to check for employee anniversaries
-cron.schedule("0 0 * * *", async () => {
-  console.log("⏰ Running daily anniversary check...");
+app.get("/run-carryover", async (req, res) => {
   try {
-    await checkAnniversaries();
+    await updateCarryOvers();
+    res.send("Carry-over job executed manually.");
   } catch (err) {
-    console.error("Error checking anniversaries:", err);
+    console.error(err);
+    res.status(500).send("Error running carry-over job.");
   }
 });
-
-async function checkAnniversaries() {
-  const [users] = await db.query(
-    "SELECT id, start_date FROM users WHERE role = 'employee'"
-  );
-
-  const today = new Date();
-  const todayMonth = today.getMonth();
-  const todayDate = today.getDate();
-
-  for (const user of users) {
-    const start = new Date(user.start_date);
-
-    // Check if today is their anniversary month/day
-    if (start.getMonth() === todayMonth && start.getDate() === todayDate) {
-      console.log(`🎉 Updating PTO for ${user.id} (Anniversary Today)`);
-
-      // Calculate unused days from last year
-      const [policies] = await db.query(
-        "SELECT * FROM policy ORDER BY years_of_service ASC"
-      );
-      const years = Math.floor((today - start) / (1000 * 60 * 60 * 24 * 365));
-      const policy =
-        policies.find((p) => years >= p.years_of_service) || policies[0];
-      const totalAllowed = policy.days_allowed;
-
-      // PTO used this past year
-      const [usedRows] = await db.query(
-        "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE()) - 1",
-        [user.id]
-      );
-      const usedLastYear = usedRows[0].used;
-      const unused = Math.max(totalAllowed - usedLastYear, 0);
-      const carry = unused >= 1 ? 1 : 0;
-
-      await db.query("UPDATE users SET carry_over = ? WHERE id = ?", [
-        carry,
-        user.id,
-      ]);
-    }
-  }
-}

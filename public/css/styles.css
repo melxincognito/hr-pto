@@ -217,11 +217,23 @@ table tbody tr:nth-child(even) {
 }
 
 /* Responsive for mobile */
-@media (max-width: 480px) {
+@media (max-width: 390px) {
   table th,
   table td {
     font-size: 0.9rem;
     padding: 0.5rem 0.75rem;
+  }
+  #loginContainer {
+    display: flex;
+  }
+  #loginForm {
+    width: 90%;
+    padding: 5%;
+  }
+  #username,
+  #password,
+  #login {
+    height: 5rem;
   }
 }
 

@@ -12,13 +12,16 @@
       <div class="mobile-nav">
         <button id="hamburgerBtn" class="hamburger">☰</button>
         <div id="mobileMenu" class="mobile-menu hidden">
+          <button id="employeeSettings" class="employee-settings">
+            Settings
+          </button>
           <button id="logoutMobile" class="logout-btn">Logout</button>
         </div>
       </div>
       <button id="logoutBtn" class="logoutBtnEmployee">Logout</button>
     </div>
 
-    <div class="container">
+    <div class="tab-content">
       <section id="overview">
         <h3>PTO Overview</h3>
         <p><strong>Total Allotted:</strong> <span id="total"></span> days</p>
@@ -53,6 +56,33 @@
         </table>
       </section>
       <div id="policyMobileContainer" class="mobile-policy hidden"></div>
+    </div>
+
+    <!-- Settings -->
+
+    <!-- Settings -->
+    <div id="settings" class="tab-content hidden">
+      <h3>Settings</h3>
+      <p>Username: <span id="usernameDisplay">aiyana.pomato</span></p>
+
+      <label>Current Password:</label>
+      <input
+        id="currentPassword"
+        type="password"
+        placeholder="Current Password"
+      />
+
+      <label>New Password:</label>
+      <input id="newPassword" type="password" placeholder="New Password" />
+
+      <label>Confirm New Password:</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirm New Password"
+      />
+
+      <button id="saveSettings">Save Changes</button>
     </div>
 
     <script src="js/employee.js"></script>

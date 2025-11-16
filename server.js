@@ -74,8 +74,8 @@ app.get("/api/logout", (req, res) => {
 /*
 // Fallback redirect
 app.get(/.*/ /*, (req, res) => {
-  if (!req.session || !req.session.user) {
-    console.log("No session found — redirecting to login");
+  if (!req.session || !req.session.user.id) {
+    alert("No session found — redirecting to login");
     return res.redirect("/login.html");
   }
 
@@ -376,3 +376,32 @@ async function checkAnniversaries() {
     }
   }
 }
+// employee update password
+app.put(
+  "/api/employee/settings",
+  /*ensureEmployee,*/ async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.session.user.id;
+    try {
+      // Get current hashed password from DB
+      const [user] = await db.query("SELECT password FROM users WHERE id = ?", [
+        userId,
+      ]);
+      if (!user) return res.sendStatus(404);
+
+      const match = await bcrypt.compare(currentPassword, user.password);
+      if (!match) return res.sendStatus(401); // wrong current password
+
+      const hashed = await bcrypt.hash(newPassword, 10);
+      await db.query("UPDATE users SET password = ? WHERE id = ?", [
+        hashed,
+        userId,
+      ]);
+
+      res.sendStatus(200);
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    }
+  }
+);

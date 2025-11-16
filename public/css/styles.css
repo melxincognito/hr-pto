@@ -412,7 +412,7 @@ table tbody tr:nth-child(even) {
   background-color: #b02a37;
 }
 /* Responsive for mobile */
-@media (max-width: 390px) {
+@media (max-width: 600px) {
   table th,
   table td {
     font-size: 0.9rem;

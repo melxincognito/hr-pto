@@ -153,7 +153,7 @@ app.post("/api/admin/pto", ensureAdmin, async (req, res) => {
 // PTO Summary
 app.get("/api/admin/summary", async (req, res) => {
   const [employees] = await db.query(
-    "SELECT id, full_name, start_date, total_pto_allowed, carry_over FROM users WHERE role='employee'"
+    "SELECT id, full_name, start_date, total_pto_allowed FROM users WHERE role='employee'"
   );
 
   const [policies] = await db.query(
@@ -260,7 +260,7 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
 // updates carry overs and updates PTO based on anniversary year
 async function updateCarryOvers() {
   const [users] = await db.query(
-    "SELECT id, start_date, carry_over, last_carry_year, last_policy_update_year FROM users WHERE role='employee'"
+    "SELECT id, start_date, last_carry_year, last_policy_update_year FROM users WHERE role='employee'"
   );
 
   const today = new Date();
@@ -280,7 +280,7 @@ async function updateCarryOvers() {
       (today - start) / (1000 * 60 * 60 * 24 * 365)
     );
 
-    //  1. APPLY CARRY OVER
+    //  1. Calculate if there is a carry over
 
     let carryOver = 0;
 
@@ -303,11 +303,8 @@ async function updateCarryOvers() {
       console.log("used last year: " + usedLastYear);
 
       const unused = currentPto - usedLastYear;
-      console.log(unused);
 
       carryOver = unused > 0 ? 1 : 0;
-
-      console.log("carry over: " + carryOver);
     }
 
     //   2. GET POLICY TIER
@@ -335,16 +332,11 @@ async function updateCarryOvers() {
 
       await db.query(
         `UPDATE users 
-         SET total_pto_allowed = ?, 
-             carry_over = ?, 
+         SET total_pto_allowed = ?,
              last_carry_year = ?, 
              last_policy_update_year = ?
          WHERE id = ?`,
-        [newTotalAllowed, carryOver, currentYear, currentYear, user.id]
-      );
-
-      console.log(
-        `Updated PTO for user ${user.id}: ${allowedDays} + carry ${carryOver}`
+        [newTotalAllowed, currentYear, currentYear, user.id]
       );
     }
   }

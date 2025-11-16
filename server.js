@@ -88,7 +88,7 @@ app.get(/.*/ /*, (req, res) => {
 });
 */
 
-// Example protected routes
+// Example protected routes.         !!!IS THIS USED ANYWHERE??!!!
 app.get("/api/employee/pto", ensureAuth, async (req, res) => {
   const userId = req.session.user.id;
   const [rows] = await db.query("SELECT * FROM pto WHERE user_id = ?", [
@@ -254,7 +254,7 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
     [userId]
   );
 
-  res.json({ total_allowed, used, remaining, history, total_pto_allowed });
+  res.json({ used, remaining, history, total_pto_allowed });
 });
 
 // updates carry overs and updates PTO based on anniversary year
@@ -299,9 +299,6 @@ async function updateCarryOvers() {
       const currentPto = currentPtoAllowed[0].total_pto_allowed;
       const usedLastYear = ptoUsed[0].used;
 
-      console.log("currentPTO: " + currentPto);
-      console.log("used last year: " + usedLastYear);
-
       const unused = currentPto - usedLastYear;
 
       carryOver = unused > 0 ? 1 : 0;
@@ -337,6 +334,22 @@ async function updateCarryOvers() {
              last_policy_update_year = ?
          WHERE id = ?`,
         [newTotalAllowed, currentYear, currentYear, user.id]
+      );
+
+      // MOVE OLD PTO INTO HISTORY
+      await db.query(
+        `INSERT INTO pto_history (user_id, date, hours_used, approved_by, created_at)
+          SELECT user_id, date, hours_used, approved_by, created_at
+          FROM pto
+          WHERE user_id = ?;`,
+        [user.id]
+      );
+
+      // DELETE OLD PTO FROM MAIN TABLE
+      await db.query(
+        `DELETE FROM pto
+          WHERE user_id = ?`,
+        [user.id]
       );
     }
   }

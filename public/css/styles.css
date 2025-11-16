@@ -223,6 +223,7 @@ table tbody tr:nth-child(even) {
     font-size: 0.9rem;
     padding: 0.5rem 0.75rem;
   }
+  /* login.html */
   #loginContainer {
     display: flex;
   }
@@ -230,10 +231,14 @@ table tbody tr:nth-child(even) {
     width: 90%;
     padding: 5%;
   }
-  #username,
-  #password,
-  #login {
-    height: 5rem;
+
+  /* admin.html */
+
+  #admin_tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
   }
 }
 

@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import session from "express-session";
 import mysql from "mysql2/promise";
@@ -41,14 +40,12 @@ function ensureAuth(req, res, next) {
   next();
 }
 
-// Role-based guard
 function ensureAdmin(req, res, next) {
   if (!req.session.user || req.session.user.role !== "admin")
     return res.status(403).send("Access denied.");
   next();
 }
 
-// Login route
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const [rows] = await db.query("SELECT * FROM users WHERE username = ?", [
@@ -66,7 +63,6 @@ app.post("/api/login", async (req, res) => {
   res.json({ success: true, role: user.role });
 });
 
-// Logout route
 app.get("/api/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login.html"));
 });
@@ -87,15 +83,6 @@ app.get(/.*/ /*, (req, res) => {
   }
 });
 */
-
-// Example protected routes.         !!!IS THIS USED ANYWHERE??!!!
-app.get("/api/employee/pto", ensureAuth, async (req, res) => {
-  const userId = req.session.user.id;
-  const [rows] = await db.query("SELECT * FROM pto WHERE user_id = ?", [
-    userId,
-  ]);
-  res.json(rows);
-});
 
 app.get("/api/admin/pto", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
@@ -211,7 +198,7 @@ app.get("/api/policy", ensureAuth, async (req, res) => {
   res.json(rows);
 });
 
-// Delete PTO Entry from summary table (Admin only)
+// Delete PTO Entry from summary table
 app.delete("/api/admin/pto/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -220,7 +207,7 @@ app.delete("/api/admin/pto/:id", async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "PTO entry not found" });
     }
-    res.sendStatus(204); // success, no content
+    res.sendStatus(204);
   } catch (err) {
     console.error("Error deleting PTO entry:", err);
     res.sendStatus(500);
@@ -248,7 +235,7 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
 
   const remaining = total_pto_allowed - used;
 
-  // PTO history (all years)
+  // PTO history
   const [history] = await db.query(
     "SELECT date, hours_used FROM pto WHERE user_id = ? ORDER BY date DESC",
     [userId]
@@ -354,9 +341,9 @@ async function updateCarryOvers() {
     }
   }
 }
+
 // cron job to run carry overs every day at midnight
 cron.schedule("0 0 * * *", () => {
-  console.log("⏰ Running daily PTO carry-over check...");
   updateCarryOvers().catch((err) => console.error("Carry-over error:", err));
 });
 

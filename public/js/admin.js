@@ -85,11 +85,42 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
 async function loadSummary() {
   const res = await fetch("/api/admin/summary");
   const data = await res.json();
-
+  // Desktop Layout
   const tbody = document.querySelector("#summaryTable tbody");
   tbody.innerHTML = "";
   data.forEach((row) => {
     tbody.innerHTML += `<tr><td>${row.full_name}</td><td>${row.total_allowed}</td><td>${row.used}</td><td>${row.remaining}</td></tr>`;
+  });
+  // MOBILE CARDS
+  const mobileContainer = document.querySelector("#summaryMobileContainer");
+  mobileContainer.innerHTML = "";
+
+  data.forEach((row) => {
+    mobileContainer.innerHTML += `
+      <div class="summary-card">
+        <button class="summary-header">
+          <span>${row.full_name}</span>
+          <span class="arrow">▼</span>
+        </button>
+
+        <div class="summary-body">
+          <div><strong>Total Allowed:</strong> ${row.total_allowed}</div>
+          <div><strong>Used:</strong> ${row.used}</div>
+          <div><strong>Remaining:</strong> ${row.remaining}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  // Enable expand/collapse
+  document.querySelectorAll(".summary-header").forEach((header) => {
+    header.addEventListener("click", () => {
+      const body = header.nextElementSibling;
+      const arrow = header.querySelector(".arrow");
+
+      body.classList.toggle("open");
+      arrow.classList.toggle("rotated");
+    });
   });
 }
 
@@ -163,6 +194,39 @@ async function loadPolicies() {
 
       if (res.ok) alert("Policy updated!");
       else alert("Error updating policy");
+    });
+  });
+
+  // MOBILE DROPDOWN CARDS
+  const mobileContainer = document.querySelector("#policyMobileContainer");
+  mobileContainer.innerHTML = "";
+
+  data.forEach((p) => {
+    mobileContainer.innerHTML += `
+    <div class="policy-card">
+      <button class="policy-header">
+        <span>${p.years_of_service} Years</span>
+        <span class="arrow">▼</span>
+      </button>
+
+      <div class="policy-body">
+        <label>Days Allowed</label>
+        <input type="number" class="daysInput" data-id="${p.id}" value="${p.days_allowed}" />
+
+        <label>Notes</label>
+        <input type="text" class="notesInput" data-id="${p.id}" value="${p.notes}" />
+
+        <button class="savePolicy" data-id="${p.id}">Save</button>
+      </div>
+    </div>
+  `;
+  });
+
+  // Enable dropdown behavior
+  document.querySelectorAll(".policy-header").forEach((header) => {
+    header.addEventListener("click", () => {
+      const body = header.nextElementSibling;
+      body.classList.toggle("open");
     });
   });
 }

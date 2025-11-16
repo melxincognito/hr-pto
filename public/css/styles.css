@@ -216,6 +216,114 @@ table tbody tr:nth-child(even) {
   background-color: #f9fafb;
 }
 
+/* admin.html pto summary section. Hidden on Desktop */
+.mobile-summary {
+  display: none;
+}
+
+.summary-card {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: white;
+  overflow: hidden;
+}
+
+.summary-header {
+  width: 100%;
+  background: #2563eb;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.summary-header .arrow {
+  transition: transform 0.2s ease;
+}
+
+.summary-header .arrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Content inside card */
+.summary-body {
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-body.open {
+  display: flex;
+}
+
+.summary-body div {
+  font-size: 0.95rem;
+}
+
+/*admin.html policy section*/
+.mobile-policy {
+  display: none;
+}
+
+.policy-card {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: white;
+  overflow: hidden;
+}
+
+.policy-header {
+  width: 100%;
+  background: #2563eb;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.policy-header .arrow {
+  transition: transform 0.2s ease;
+}
+
+.policy-body {
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.policy-body.open {
+  display: flex;
+}
+
+.policy-body label {
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.policy-body input {
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.policy-body button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
 /* Responsive for mobile */
 @media (max-width: 390px) {
   table th,
@@ -239,6 +347,20 @@ table tbody tr:nth-child(even) {
     flex-wrap: wrap;
     align-content: center;
     justify-content: center;
+  }
+
+  #policyTable,
+  #summaryTable {
+    display: none;
+  }
+
+  .mobile-policy,
+  .mobile-summary {
+    display: block;
+  }
+
+  .policy-header {
+    font-size: 1.1rem;
   }
 }
 

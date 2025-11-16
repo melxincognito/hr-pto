@@ -17,6 +17,7 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await fetch("/api/logout");
   window.localStorage.clear();
+  window.sessionStorage.clear();
   window.location.href = "/login.html";
 });
 

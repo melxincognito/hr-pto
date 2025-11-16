@@ -8,7 +8,13 @@
   <body>
     <div class="navbar">
       <h2>Employee Dashboard</h2>
-      <button id="logoutBtn">Logout</button>
+      <div class="mobile-nav">
+        <button id="hamburgerBtn" class="hamburger">☰</button>
+        <div id="mobileMenu" class="mobile-menu hidden">
+          <button id="logoutMobile" class="logout-btn">Logout</button>
+        </div>
+      </div>
+      <button id="logoutBtn" class="logoutBtnEmployee">Logout</button>
     </div>
 
     <div class="container">
@@ -32,7 +38,7 @@
         </table>
       </section>
 
-      <section id="policy">
+      <section id="policy" class="tab-content">
         <h3 id="current-pto-policy">Current PTO Policy</h3>
         <table id="policyTable">
           <thead>
@@ -45,6 +51,7 @@
           <tbody></tbody>
         </table>
       </section>
+      <div id="policyMobileContainer" class="mobile-policy hidden"></div>
     </div>
 
     <script src="js/employee.js"></script>

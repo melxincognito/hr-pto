@@ -307,6 +307,11 @@ table tbody tr:nth-child(even) {
   transition: transform 0.2s ease;
 }
 
+.arrow-employee {
+  right: 3%;
+  position: absolute;
+}
+
 .summary-header .arrow.rotated {
   transform: rotate(180deg);
 }
@@ -343,6 +348,7 @@ table tbody tr:nth-child(even) {
 .policy-header {
   width: 100%;
   background: #2563eb;
+  color: white;
   padding: 12px 15px;
   font-size: 1rem;
   border: none;

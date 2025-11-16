@@ -182,6 +182,7 @@ app.get("/api/admin/summary", async (req, res) => {
     );
 
     const used = usedRows[0].used;
+
     const remaining = Math.max(total_allowed - used, 0);
 
     summary.push({
@@ -294,9 +295,38 @@ async function updateCarryOvers() {
       (today - start) / (1000 * 60 * 60 * 24 * 365)
     );
 
-    // ============================
-    //      1. GET POLICY TIER
-    // ============================
+    //  1. APPLY CARRY OVER
+
+    let carryOver = 0;
+
+    // Only allow once per year
+    if (user.last_carry_year !== currentYear) {
+      const [currentPtoAllowed] = await db.query(
+        "SELECT total_pto_allowed FROM users WHERE id = ?",
+        [user.id]
+      );
+      // PTO used last year
+      const [ptoUsed] = await db.query(
+        "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
+        [user.id, currentYear /*- 1 commented out to see what happens */]
+      );
+
+      const currentPto = currentPtoAllowed[0].total_pto_allowed;
+      const usedLastYear = ptoUsed[0].used;
+
+      console.log("currentPTO: " + currentPto);
+      console.log("used last year: " + usedLastYear);
+
+      const unused = currentPto - usedLastYear;
+      console.log(unused);
+
+      carryOver = unused > 0 ? 1 : 0;
+
+      console.log("carry over: " + carryOver);
+    }
+
+    //   2. GET POLICY TIER
+
     const [policies] = await db.query(
       "SELECT * FROM policy ORDER BY years_of_service ASC"
     );
@@ -304,34 +334,11 @@ async function updateCarryOvers() {
     // Choose correct PTO policy tier based on years worked
 
     const allowedDays = policies[yearsWorked].days_allowed;
-    console.log("days allowed: " + allowedDays);
-    console.log("years worked: " + yearsWorked);
-    console.log(policies[yearsWorked]);
+    //console.log("days allowed: " + allowedDays);
+    //console.log("years worked: " + yearsWorked);
+    //console.log(policies[yearsWorked]);
 
-    // ============================
-    //      2. APPLY CARRY OVER
-    // ============================
-
-    let carryOver = 0;
-
-    // Only allow once per year
-    if (user.last_carry_year !== currentYear) {
-      // PTO used last year
-      const [ptoUsed] = await db.query(
-        "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
-        [user.id, currentYear - 1]
-      );
-
-      const usedLastYear = ptoUsed[0].used;
-
-      const unused = Math.max(allowedDays - usedLastYear, 0);
-
-      carryOver = unused > 0 ? 1 : 0;
-    }
-
-    // ============================
     // 3. UPDATE USER ALLOWED PTO
-    // ============================
 
     // Only update PTO tier once per year
     const shouldUpdatePolicy = user.last_policy_update_year !== currentYear;

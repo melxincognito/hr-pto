@@ -1,9 +1,87 @@
+/* General */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   background: #f7f8fa;
 }
 
+/* Form inputs */
+form input,
+form select,
+form button,
+input {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+form input:focus,
+form select:focus,
+input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  outline: none;
+}
+
+form button,
+button {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+form button:hover,
+button:hover {
+  background-color: #2563eb;
+}
+button {
+  background: #004aad;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", sans-serif;
+}
+
+/* Table headers */
+table th {
+  background-color: #f1f5f9;
+  color: #334155;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #ededed;
+}
+
+/* nav bars, desktop and mobile */
 .navbar {
   background: #004aad;
   color: white;
@@ -27,7 +105,6 @@ body {
   padding: 10px;
 }
 
-/* Mobile Menu Container */
 .mobile-menu {
   position: absolute;
   top: 45px;
@@ -49,7 +126,6 @@ body {
   display: none;
 }
 
-/* Mobile buttons */
 .mobile-tab-btn,
 #logoutMobile {
   text-align: left;
@@ -74,15 +150,6 @@ body {
   background: #dc2626;
 }
 
-button {
-  background: #004aad;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 .login-container {
   display: block;
   align-content: center;
@@ -103,67 +170,7 @@ button {
   display: none;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  background: white;
-}
-
-table,
-th,
-td {
-  border: 1px solid #ccc;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-}
-
-/* Form container */
-
-/* Form inputs */
-form input,
-form select,
-form button,
-input {
-  display: block;
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-/* Focus state for inputs */
-form input:focus,
-form select:focus,
-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  outline: none;
-}
-
-/* Buttons */
-form button,
-button {
-  background-color: #3b82f6;
-  color: #ffffff;
-  border: none;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-form button:hover,
-button:hover {
-  background-color: #2563eb;
-}
-
+/* Desktop Pto History Admin and Employee*/
 #pto-history,
 #current-pto-policy {
   margin-left: 15px;
@@ -242,39 +249,6 @@ button:hover {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   padding: 1rem 1rem 0 1rem;
-}
-
-/* Table styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: "Inter", sans-serif;
-}
-
-/* Table headers */
-table th {
-  background-color: #f1f5f9;
-  color: #334155;
-  font-weight: 600;
-  padding: 0.75rem 1rem;
-  text-align: left;
-}
-
-/* Table cells */
-table td {
-  padding: 0.65rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  color: #1e293b;
-}
-
-/* Hover effect on rows */
-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
-/* Optional: stripe effect */
-table tbody tr:nth-child(even) {
-  background-color: #f9fafb;
 }
 
 /* admin.html pto summary section. Hidden on Desktop */

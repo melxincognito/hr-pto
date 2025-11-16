@@ -257,6 +257,29 @@ async function loadPolicies() {
       body.classList.toggle("open");
     });
   });
+
+  // Attach savePolicy click events for mobile
+  mobileContainer.querySelectorAll(".savePolicy").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      const days = mobileContainer.querySelector(
+        `.daysInput[data-id="${id}"]`
+      ).value;
+      const notes = mobileContainer.querySelector(
+        `.notesInput[data-id="${id}"]`
+      ).value;
+
+      const res = await fetch(`/api/admin/policy/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ days_allowed: days, notes }),
+      });
+
+      if (res.ok) {
+        alert("Policy updated!");
+      } else alert("Error updating policy");
+    });
+  });
 }
 
 // Load all on startup

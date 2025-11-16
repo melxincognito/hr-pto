@@ -41,7 +41,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 999;
 }
@@ -419,8 +418,9 @@ table tbody tr:nth-child(even) {
     padding: 0.5rem 0.75rem;
   }
   /* login.html */
-  #loginContainer {
-    display: flex;
+  .login-container {
+    display: block;
+    text-align: center;
   }
   #loginForm {
     width: 90%;
@@ -443,7 +443,6 @@ table tbody tr:nth-child(even) {
 
   .mobile-nav {
     display: block; /* show hamburger */
-    margin-bottom: 20px;
   }
 
   #policyTable,

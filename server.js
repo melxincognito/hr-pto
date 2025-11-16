@@ -7,7 +7,6 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cron from "node-cron";
 
-/* MAKE SURE TO UNCOMMENT THE ENSURE ADMIN ONCE YOU SET UP YOUR USERNAME AND PASSWORD AFTER TESTING */
 dotenv.config();
 
 const app = express();
@@ -332,11 +331,13 @@ async function updateCarryOvers() {
     );
 
     // Choose correct PTO policy tier based on years worked
+    let allowedDays = 0;
 
-    const allowedDays = policies[yearsWorked].days_allowed;
-    //console.log("days allowed: " + allowedDays);
-    //console.log("years worked: " + yearsWorked);
-    //console.log(policies[yearsWorked]);
+    if (yearsWorked <= 3) {
+      allowedDays = policies[yearsWorked].days_allowed;
+    } else {
+      allowedDays = policies[4].days_allowed;
+    }
 
     // 3. UPDATE USER ALLOWED PTO
 
@@ -357,7 +358,7 @@ async function updateCarryOvers() {
       );
 
       console.log(
-        `🎉 Updated PTO for user ${user.id}: ${allowedDays} + carry ${carryOver}`
+        `Updated PTO for user ${user.id}: ${allowedDays} + carry ${carryOver}`
       );
     }
   }

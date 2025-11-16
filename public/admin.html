@@ -8,6 +8,20 @@
   <body>
     <div class="navbar">
       <h2>Admin Dashboard</h2>
+      <div class="mobile-nav">
+        <button id="hamburgerBtn" class="hamburger">☰</button>
+        <div id="mobileMenu" class="mobile-menu hidden">
+          <button class="mobile-tab-btn" data-tab="employees">Employees</button>
+          <button class="mobile-tab-btn" data-tab="pto">PTO Entries</button>
+          <button class="mobile-tab-btn" data-tab="summary">PTO Summary</button>
+          <button class="mobile-tab-btn" data-tab="upcoming">
+            Upcoming PTO
+          </button>
+          <button class="mobile-tab-btn" data-tab="policy">PTO Policy</button>
+
+          <button id="logoutMobile" class="logout-btn">Logout</button>
+        </div>
+      </div>
       <button id="logoutBtn">Logout</button>
     </div>
 

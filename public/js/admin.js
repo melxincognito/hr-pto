@@ -1,15 +1,42 @@
-// Tab navigation
+// UNIVERSAL TAB SWITCHING
+function showTab(tabName) {
+  document.querySelectorAll(".tab-content").forEach((c) => {
+    c.classList.add("hidden");
+  });
+  document.getElementById(tabName).classList.remove("hidden");
+}
+
+// DESKTOP TABS
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".tab-content")
-      .forEach((c) => c.classList.add("hidden"));
-    document.getElementById(btn.dataset.tab).classList.remove("hidden");
+    showTab(btn.dataset.tab);
   });
 });
 
+// DESKTOP LOGOUT
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await fetch("/api/logout");
+  window.localStorage.clear();
+  window.location.href = "/login.html";
+});
+
+// MOBILE MENU TOGGLE
+document.getElementById("hamburgerBtn").addEventListener("click", () => {
+  document.getElementById("mobileMenu").classList.toggle("hidden");
+});
+
+// MOBILE TABS
+document.querySelectorAll(".mobile-tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    showTab(btn.dataset.tab);
+    document.getElementById("mobileMenu").classList.add("hidden");
+  });
+});
+
+// MOBILE LOGOUT
+document.getElementById("logoutMobile").addEventListener("click", async () => {
+  await fetch("/api/logout");
+  window.localStorage.clear();
   window.location.href = "/login.html";
 });
 

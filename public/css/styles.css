@@ -13,6 +13,68 @@ body {
   box-shadow: 0px 0px 18px 4px rgba(0, 0, 0, 0.53);
 }
 
+.mobile-nav {
+  display: none;
+  position: relative;
+}
+
+/* Hamburger Icon */
+.hamburger {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* Mobile Menu Container */
+.mobile-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  transform: translateX(0);
+  width: 300px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.mobile-menu.hidden {
+  display: none;
+}
+
+/* Mobile buttons */
+.mobile-tab-btn,
+#logoutMobile {
+  text-align: left;
+  padding: 10px 12px;
+  background: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.mobile-tab-btn:hover {
+  background: #e2e8f0;
+}
+
+#logoutMobile {
+  background: #ef4444;
+  color: white;
+}
+
+#logoutMobile:hover {
+  background: #dc2626;
+}
+
 button {
   background: #004aad;
   color: white;
@@ -324,46 +386,6 @@ table tbody tr:nth-child(even) {
   border-radius: 6px;
 }
 
-/* Responsive for mobile */
-@media (max-width: 390px) {
-  table th,
-  table td {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
-  }
-  /* login.html */
-  #loginContainer {
-    display: flex;
-  }
-  #loginForm {
-    width: 90%;
-    padding: 5%;
-  }
-
-  /* admin.html */
-
-  #admin_tabs {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: center;
-  }
-
-  #policyTable,
-  #summaryTable {
-    display: none;
-  }
-
-  .mobile-policy,
-  .mobile-summary {
-    display: block;
-  }
-
-  .policy-header {
-    font-size: 1.1rem;
-  }
-}
-
 /* Update Policy */
 .savePolicy {
   width: 100%;
@@ -382,4 +404,55 @@ table tbody tr:nth-child(even) {
 }
 .delete-btn:hover {
   background-color: #b02a37;
+}
+/* Responsive for mobile */
+@media (max-width: 390px) {
+  table th,
+  table td {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+  /* login.html */
+  #loginContainer {
+    display: flex;
+  }
+  #loginForm {
+    width: 90%;
+    padding: 5%;
+  }
+
+  #logoutBtn {
+    height: 50%;
+    margin-top: 5%;
+  }
+
+  /* admin.html */
+
+  #admin_tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .mobile-nav {
+    display: block; /* show hamburger */
+    margin-bottom: 20px;
+  }
+
+  #policyTable,
+  #summaryTable,
+  #logoutBtn,
+  #admin_tabs {
+    display: none;
+  }
+
+  .mobile-policy,
+  .mobile-summary {
+    display: block;
+  }
+
+  .policy-header {
+    font-size: 1.1rem;
+  }
 }

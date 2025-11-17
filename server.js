@@ -171,7 +171,7 @@ app.get("/api/admin/summary", async (req, res) => {
 
     // PTO used (current year)
     const [usedRows] = await db.query(
-      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE())",
+      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ?",
       [emp.id]
     );
 
@@ -244,7 +244,7 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
 
   // PTO used this current year only
   const [usedRows] = await db.query(
-    "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = YEAR(CURDATE())",
+    "SELECT COUNT(*) AS used FROM pto WHERE user_id = ?",
     [userId]
   );
 

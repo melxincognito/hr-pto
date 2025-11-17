@@ -207,7 +207,7 @@ app.get("/api/admin/pastptohistory", ensureAdmin, async (req, res) => {
   res.json(rows);
 });
 
-// PTO Policies (read-only for now)
+// PTO Policies (read-only)
 app.get("/api/policy", ensureAuth, async (req, res) => {
   const [rows] = await db.query(
     "SELECT * FROM policy ORDER BY years_of_service ASC"
@@ -241,8 +241,6 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
   );
   const user = userRows[0];
   const total_pto_allowed = user.total_pto_allowed;
-
-  // PTO used this current year only
   const [usedRows] = await db.query(
     "SELECT COUNT(*) AS used FROM pto WHERE user_id = ?",
     [userId]

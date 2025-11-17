@@ -200,14 +200,39 @@ async function loadPastPtoHistory() {
   const res = await fetch("/api/admin/pastptohistory");
   const data = await res.json();
 
-  const tbody = document.querySelector("#pastPtoTable tbody");
-  tbody.innerHTML = "";
-  data.forEach((pto) => {
-    tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
-      0,
-      10
-    )}</td>
-    </tr>`;
+  const container = document.getElementById("pastPtoContainer");
+  container.innerHTML = "";
+
+  const grouped = {};
+  data.forEach((entry) => {
+    if (!grouped[entry.full_name]) grouped[entry.full_name] = [];
+    grouped[entry.full_name].push(entry);
+  });
+
+  Object.keys(grouped)
+  .forEach((name) => {
+    const section = document.createElement("div");
+    section.classList.add("accordion-item");
+
+    section.innerHTML = `
+      <button class="accordion-header">${name}</button>
+      <div class="accordion-body hidden">
+        ${grouped[name]
+          .map((pto) => `<p class="history-row">${pto.date.slice(0, 10)}</p>`)
+          .join("")}
+      </div>
+    `;
+
+    container.appendChild(section);
+  });
+
+  // Add toggle logic
+  document.querySelectorAll(".accordion-header").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const body = btn.nextElementSibling;
+      body.classList.toggle("hidden");
+      btn.classList.toggle("open");
+    });
   });
 }
 

@@ -209,23 +209,6 @@ async function loadPastPtoHistory() {
     )}</td>
     </tr>`;
   });
-
-  document.querySelectorAll(".delete-btn").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
-      const id = e.target.dataset.id;
-      if (confirm("Are you sure you want to delete this PTO entry?")) {
-        const res = await fetch(`/api/admin/pto/${id}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          alert("PTO entry deleted!");
-          await loadUpcoming(), loadSummary();
-        } else {
-          alert("Error deleting PTO entry.");
-        }
-      }
-    });
-  });
 }
 
 // Load PTO Policies

@@ -195,6 +195,41 @@ async function loadUpcoming() {
   });
 }
 
+// PTO Past Years History
+
+async function loadPastPtoHistory() {
+  const res = await fetch("/api/admin/pastptohistory");
+  const data = await res.json();
+
+  const tbody = document.querySelector("#pastPtoTable tbody");
+  tbody.innerHTML = "";
+  data.forEach((pto) => {
+    console.log(pto.id);
+    tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
+      0,
+      10
+    )}</td>
+    </tr>`;
+  });
+
+  document.querySelectorAll(".delete-btn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (confirm("Are you sure you want to delete this PTO entry?")) {
+        const res = await fetch(`/api/admin/pto/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          alert("PTO entry deleted!");
+          await loadUpcoming(), loadSummary();
+        } else {
+          alert("Error deleting PTO entry.");
+        }
+      }
+    });
+  });
+}
+
 // Load PTO Policies
 async function loadPolicies() {
   const res = await fetch("/api/policy");
@@ -295,4 +330,5 @@ async function loadPolicies() {
 loadEmployees();
 loadSummary();
 loadUpcoming();
+loadPastPtoHistory();
 loadPolicies();

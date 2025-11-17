@@ -195,6 +195,15 @@ app.get("/api/admin/upcoming", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
     "SELECT u.full_name, p.date, p.id FROM pto p JOIN users u ON p.user_id = u.id WHERE p.date >= CURDATE() ORDER BY p.date ASC"
   );
+
+  res.json(rows);
+});
+
+// Past Pto History PTO
+app.get("/api/admin/pastptohistory", ensureAdmin, async (req, res) => {
+  const [rows] = await db.query(
+    "SELECT u.full_name, p.date, p.id FROM pto_history p JOIN users u ON p.user_id = u.id"
+  );
   res.json(rows);
 });
 

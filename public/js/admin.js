@@ -166,7 +166,6 @@ async function loadUpcoming() {
   const tbody = document.querySelector("#upcomingTable tbody");
   tbody.innerHTML = "";
   data.forEach((pto) => {
-    console.log(pto.id);
     tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
       0,
       10
@@ -204,7 +203,6 @@ async function loadPastPtoHistory() {
   const tbody = document.querySelector("#pastPtoTable tbody");
   tbody.innerHTML = "";
   data.forEach((pto) => {
-    console.log(pto.id);
     tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
       0,
       10

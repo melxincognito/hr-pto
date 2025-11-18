@@ -272,7 +272,6 @@ app.put("/api/employee/change-password", ensureAuth, async (req, res) => {
     if (!valid)
       return res.status(400).json({ error: "Old password is incorrect" });
 
-    // Hash new password
     const hashed = await bcrypt.hash(new_password, 10);
 
     await db.query("UPDATE users SET password = ? WHERE id = ?", [

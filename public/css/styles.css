@@ -134,6 +134,8 @@ table tbody tr:nth-child(even) {
 }
 
 .mobile-tab-btn,
+#dashboardMobile,
+#settingsMobile,
 #logoutMobile {
   text-align: left;
   padding: 10px 12px;
@@ -484,8 +486,8 @@ table tbody tr:nth-child(even) {
 
   #policyTable,
   #summaryTable,
-  #logoutBtn,
-  #admin_tabs {
+  #admin_tabs,
+  .desktop-nav {
     display: none;
   }
 

@@ -1,5 +1,4 @@
 // UNIVERSAL TAB SWITCHING
-
 function showTab(tabName) {
   document.querySelectorAll(".tab-content").forEach((c) => {
     c.classList.add("hidden");

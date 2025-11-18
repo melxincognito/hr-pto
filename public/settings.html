@@ -1,0 +1,49 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Settings</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <div class="navbar">
+      <h2>Account Settings</h2>
+
+      <div class="mobile-nav">
+        <button id="hamburgerBtn" class="hamburger">☰</button>
+        <div id="mobileMenu" class="mobile-menu hidden">
+          <button id="logoutMobile" class="logout-btn">Logout</button>
+        </div>
+      </div>
+      <div class="desktop-nav">
+        <button id="dashboardBtn">Dashboard</button>
+        <button id="settingsBtn">Settings</button>
+        <button id="logoutBtn" class="logoutBtnEmployee">Logout</button>
+      </div>
+    </div>
+
+    <div class="container settings-container">
+      <h3>Change Password</h3>
+
+      <form id="passwordForm" class="settings-form">
+        <div class="floating-group">
+          <input type="password" id="old_password" placeholder=" " required />
+          <label for="old_password">Current Password</label>
+        </div>
+
+        <div class="floating-group">
+          <input type="password" id="new_password" placeholder=" " required />
+          <label for="new_password">New Password</label>
+        </div>
+
+        <button type="submit" class="save-btn">Update Password</button>
+
+        <p id="settingsError" class="error"></p>
+        <p id="settingsSuccess" class="success"></p>
+      </form>
+    </div>
+
+    <script src="js/settings.js"></script>
+  </body>
+</html>

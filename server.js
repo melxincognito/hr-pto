@@ -256,6 +256,37 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
   res.json({ used, remaining, history, total_pto_allowed });
 });
 
+// Change Password (Employee Only)
+app.put("/api/employee/change-password", ensureAuth, async (req, res) => {
+  const { old_password, new_password } = req.body;
+  const userId = req.session.user.id;
+
+  try {
+    // Fetch existing password
+    const [rows] = await db.query("SELECT password FROM users WHERE id = ?", [
+      userId,
+    ]);
+    if (!rows[0]) return res.status(404).json({ error: "User not found" });
+
+    const valid = await bcrypt.compare(old_password, rows[0].password);
+    if (!valid)
+      return res.status(400).json({ error: "Old password is incorrect" });
+
+    // Hash new password
+    const hashed = await bcrypt.hash(new_password, 10);
+
+    await db.query("UPDATE users SET password = ? WHERE id = ?", [
+      hashed,
+      userId,
+    ]);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // updates carry overs and updates PTO based on anniversary year
 async function updateCarryOvers() {
   const [users] = await db.query(
@@ -374,6 +405,7 @@ app.put("/api/admin/policy/:id", ensureAdmin, async (req, res) => {
   }
 });
 
+// manual run carryover delete while in production just to go the endpoint /run-carryover to manually run this shit
 app.get("/run-carryover", async (req, res) => {
   try {
     await updateCarryOvers();

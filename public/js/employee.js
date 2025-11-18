@@ -1,3 +1,11 @@
+document.getElementById("dashboardBtn").addEventListener("click", () => {
+  window.location.href = "/employee.html";
+});
+
+document.getElementById("settingsBtn").addEventListener("click", () => {
+  window.location.href = "/settings.html";
+});
+
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await fetch("/api/logout");
   window.location.href = "/login.html";

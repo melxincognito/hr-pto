@@ -491,3 +491,68 @@ table tbody tr:nth-child(even) {
     font-size: 1.1rem;
   }
 }
+.floating-group {
+  position: relative;
+  margin: 20px 0;
+  font-family: "Inter", sans-serif;
+}
+
+/* Input field */
+.floating-group input {
+  width: 100%;
+  padding: 14px 10px 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.25s;
+}
+/* Base select */
+.floating-group select {
+  width: 100%;
+  padding: 14px 10px 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  font-size: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: border-color 0.25s;
+}
+
+/* Focus border */
+.floating-group input:focus,
+select:focus {
+  border-color: #2563eb;
+}
+
+/* Label */
+.floating-group label {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  color: #64748b;
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  background: white;
+  padding: 0 4px;
+}
+
+/* FLOAT label on:
+   – focus
+   – OR field has content (using :not(:placeholder-shown))
+   – OR date input has value (required because dates ignore placeholder)
+*/
+.floating-group input:focus + label,
+.floating-group input:not(:placeholder-shown) + label,
+.floating-group input:valid + label,
+.floating-group select:focus + label,
+.floating-group select:not([value=""]) + label,
+.floating-group select:valid + label {
+  top: -8px;
+  left: 10px;
+  font-size: 0.75rem;
+  color: #2563eb;
+}

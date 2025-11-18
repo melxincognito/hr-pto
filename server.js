@@ -30,10 +30,8 @@ app.use(
     saveUninitialized: false,
   })
 );
-
 // Serve static files
 app.use(express.static("public"));
-
 // Authentication middleware
 function ensureAuth(req, res, next) {
   if (!req.session.user) return res.redirect("/login.html");
@@ -60,6 +58,7 @@ app.post("/api/login", async (req, res) => {
     return res.status(400).json({ error: "Invalid username or password" });
 
   req.session.user = { id: user.id, username: user.username, role: user.role };
+
   res.json({ success: true, role: user.role });
 });
 
@@ -67,11 +66,10 @@ app.get("/api/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login.html"));
 });
 
-/*
 // Fallback redirect
 
-const user = JSON.parse(sessionStorage.getItem("user"));
-
+//const user = JSON.parse(sessionStorage.getItem("user"));
+/*
 if (!user || !user.id) {
   window.location.href = "/login.html";
 }
@@ -91,7 +89,6 @@ app.get(/.*/ /*, (req, res) => {
   }
 });
 */
-
 app.get("/api/admin/pto", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
     "SELECT p.id, u.full_name, p.date, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date ASC"

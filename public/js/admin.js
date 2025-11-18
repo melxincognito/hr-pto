@@ -209,8 +209,7 @@ async function loadPastPtoHistory() {
     grouped[entry.full_name].push(entry);
   });
 
-  Object.keys(grouped)
-  .forEach((name) => {
+  Object.keys(grouped).forEach((name) => {
     const section = document.createElement("div");
     section.classList.add("accordion-item");
 

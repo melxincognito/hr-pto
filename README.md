@@ -33,6 +33,7 @@ This application provides a centralized system for tracking employee PTO balance
 - Review PTO usage history with dates
 - Access current company PTO policies
 - Automatic updates when policies change
+- Settings page to update password
 
 ## Access Control
 
@@ -45,7 +46,7 @@ This application provides a centralized system for tracking employee PTO balance
 ### User Roles
 
 - **Admins**: Melanie and Leah (full system access)
-- **Employees**: Read-only access to personal information
+- **Employees**: Read-only access to personal information and password updates
 
 ## Installation
 
@@ -57,8 +58,6 @@ This application provides a centralized system for tracking employee PTO balance
 ```
 
 ## Configuration
-
-_[TODO: Add configuration details]_
 
 - Database connection settings
 - Environment variables:
@@ -72,7 +71,8 @@ _[TODO: Add configuration details]_
 ## Database Schema
 
 - Users table: **users** (id, username, password, role, full_name, start_date, created_at, carry_over, total_pto_allowed, total_pto_used)
-- PTO entries table: **pto** (id, user_id, date, hours_used, approved_by, created_at)
+- PTO entries table: **pto** (id, user_id, date, hours_used, created_at)
+- PTO History table: **pto_history** (id, user_id, date, hours_used, created_at)
 - PTO policies table: **policy** (id, years_of_service, days_allowed, carry_over, notes )
 
 ## Security
@@ -83,7 +83,7 @@ _[TODO: Add configuration details]_
 
 ## Onboarding Process
 
-New employees receive secure login credentials as part of their onboarding package, similar to other company account information.
+New employees receive login credentials as part of their onboarding package, similar to other company account information. Employees will be directed to update their password upon logging in so it's more secure and easy for them to remember.
 
 ## PTO Calculation
 
@@ -123,6 +123,5 @@ For technical issues or access problems, contact: Melanie Gonzalez melanie@schoo
 ## Future Enhancements
 
 - PTO request/approval workflow
-- Mobile responsive design
 
 ---

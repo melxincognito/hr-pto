@@ -487,7 +487,8 @@ table tbody tr:nth-child(even) {
   #policyTable,
   #summaryTable,
   #admin_tabs,
-  .desktop-nav {
+  .desktop-nav,
+  #logoutBtn {
     display: none;
   }
 

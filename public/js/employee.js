@@ -11,12 +11,18 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "/login.html";
   window.sessionStorage.clear();
 });
-// MOBILE MENU TOGGLE
+// MOBILE MENU ITEMS
 document.getElementById("hamburgerBtn").addEventListener("click", () => {
   document.getElementById("mobileMenu").classList.toggle("hidden");
 });
 
-// MOBILE LOGOUT
+document.getElementById("dashboardMobile").addEventListener("click", () => {
+  window.location.href = "/employee.html";
+});
+document.getElementById("settingsMobile").addEventListener("click", () => {
+  window.location.href = "/settings.html";
+});
+
 document.getElementById("logoutMobile").addEventListener("click", async () => {
   await fetch("/api/logout");
   window.location.href = "/login.html";

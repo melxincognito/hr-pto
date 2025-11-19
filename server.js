@@ -11,7 +11,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Database connection
 const db = await mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -22,7 +21,6 @@ const db = await mysql.createConnection({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session setup
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secret123",
@@ -30,8 +28,7 @@ app.use(
     saveUninitialized: false,
   })
 );
-// Serve static files
-app.use(express.static("public"));
+
 // Authentication middleware
 function ensureAuth(req, res, next) {
   if (!req.session.user) return res.redirect("/login.html");
@@ -66,29 +63,41 @@ app.get("/api/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login.html"));
 });
 
-// Fallback redirect
+app.use((req, res, next) => {
+  const publicPaths = [
+    "/login.html",
+    "/api/login",
+    "/css/",
+    "/js/",
+    "/images/",
+    "/favicon.ico",
+  ];
 
-//const user = JSON.parse(sessionStorage.getItem("user"));
-/*
-if (!user || !user.id) {
-  window.location.href = "/login.html";
-}
+  if (publicPaths.some((path) => req.path.startsWith(path))) {
+    return next();
+  }
 
-app.get(/.*/ /*, (req, res) => {
-  if (!req.session || !req.session.user) {
-    console.log("No session found — redirecting to login");
+  if (!req.session.user) {
+    console.log("No session — redirecting to login:", req.path);
     return res.redirect("/login.html");
   }
 
+  next();
+});
+
+app.get("/", (req, res) => {
+  if (!req.session.user) return res.redirect("/login.html");
+
   if (req.session.user.role === "admin") {
-    console.log("Redirecting admin to dashboard");
     return res.redirect("/admin.html");
   } else {
-    console.log("Redirecting employee to dashboard");
     return res.redirect("/employee.html");
   }
 });
-*/
+
+// KEEP THE EXPRESS STATIC IN THIS EXACT SPOT OR THE PAGES AREN'T PROTECTED. DO NOT MOVVEEE!!!
+app.use(express.static("public"));
+
 app.get("/api/admin/pto", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
     "SELECT p.id, u.full_name, p.date, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date ASC"
@@ -129,11 +138,10 @@ app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
 // Add PTO Entry
 app.post("/api/admin/pto", ensureAdmin, async (req, res) => {
   const { user_id, date, hours_used } = req.body;
-  const admin_id = 3; //req.session.user.id; <- this is the original code it wasn't sending I just added my own ID as a temp fix. I might just get rid of the approved by column all together.
   try {
     await db.query(
-      "INSERT INTO pto (user_id, date, hours_used, approved_by) VALUES (?, ?, ?, ?)",
-      [user_id, date, hours_used, admin_id]
+      "INSERT INTO pto (user_id, date, hours_used) VALUES (?, ?, ?)",
+      [user_id, date, hours_used]
     );
     res.sendStatus(201);
   } catch (err) {

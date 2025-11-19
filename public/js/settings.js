@@ -11,6 +11,12 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   sessionStorage.clear();
   window.location.href = "/login.html";
 });
+document.getElementById("dashboardMobile").addEventListener("click", () => {
+  window.location.href = "/employee.html";
+});
+document.getElementById("settingsMobile").addEventListener("click", () => {
+  window.location.href = "/settings.html";
+});
 
 document.getElementById("logoutMobile").addEventListener("click", async () => {
   await fetch("/api/logout");

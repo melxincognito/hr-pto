@@ -224,7 +224,6 @@ async function loadPastPtoHistory() {
     container.appendChild(section);
   });
 
-  // Add toggle logic
   document.querySelectorAll(".accordion-header").forEach((btn) => {
     btn.addEventListener("click", () => {
       const body = btn.nextElementSibling;
@@ -330,7 +329,6 @@ async function loadPolicies() {
   });
 }
 
-// Load all on startup
 loadEmployees();
 loadSummary();
 loadUpcoming();

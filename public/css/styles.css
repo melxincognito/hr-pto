@@ -473,13 +473,6 @@ table tbody tr:nth-child(even) {
 
   /* admin.html */
 
-  #admin_tabs {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: center;
-  }
-
   .mobile-nav {
     display: block; /* show hamburger */
   }
@@ -504,7 +497,7 @@ table tbody tr:nth-child(even) {
 
   #policyTable,
   #summaryTable,
-  #admin_tabs,
+  .tab-btn,
   .desktop-nav,
   #logoutBtn {
     display: none;

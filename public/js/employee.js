@@ -87,5 +87,42 @@ async function loadPolicies() {
   });
 }
 
+function loadHolidays() {
+  let holidays = [
+    "New Years Day",
+    "Martin Luther King Day",
+    "Memorial Day",
+    "Independence Day",
+    "Labor Day",
+    "Thanksgiving Thursday",
+    "Thanksgiving Friday",
+    "Christmas Eve",
+    "Christmas Day",
+    "Your Birthday",
+  ];
+  let holidayObservance = [
+    "When a holiday falls on a Saturday, it will be observed the preceding Friday.",
+    "Holidays falling on a Sunday will be observed the following Monday.",
+  ];
+
+  let paidHolidaysList = document.getElementById("paidHolidays");
+  let holidayObservanceList = document.getElementById("holidayObservance");
+
+  holidays.forEach((h) => {
+    let listItem = document.createElement("li");
+
+    listItem.innerHTML = h;
+    paidHolidaysList.appendChild(listItem);
+  });
+
+  holidayObservance.forEach((ho) => {
+    let listItem = document.createElement("li");
+
+    listItem.innerHTML = ho;
+    holidayObservanceList.appendChild(listItem);
+  });
+}
+
 loadEmployeePTO();
 loadPolicies();
+loadHolidays();

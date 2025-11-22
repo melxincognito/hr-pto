@@ -1,6 +1,6 @@
 /* General */
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Montserrat";
   margin: 0;
   background: #f7f8fa;
 }
@@ -50,7 +50,6 @@ button:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-family: "Inter", sans-serif;
 }
 
 table th {
@@ -155,11 +154,12 @@ table tbody tr:nth-child(even) {
 }
 
 .login-container {
-  display: block;
+  display: grid;
   align-content: center;
   justify-content: center;
   align-items: center;
   justify-items: center;
+  margin-top: 1rem;
 }
 
 .tab-btn {
@@ -486,7 +486,7 @@ li {
   padding: 1rem 1.5rem 1rem;
   border-radius: 1rem;
   background: #5e9747;
-  color: rgb(0, 0, 0);
+  color: #e7f5e1;
   font-weight: bold;
 }
 
@@ -496,6 +496,10 @@ li + li {
 
 /* Responsive for mobile */
 @media (max-width: 600px) {
+  .login-container img {
+    height: 80%;
+    width: 80%;
+  }
   table th,
   table td {
     font-size: 0.9rem;
@@ -571,7 +575,6 @@ li + li {
 .floating-group {
   position: relative;
   margin: 20px 0;
-  font-family: "Inter", sans-serif;
 }
 
 /* Input field */

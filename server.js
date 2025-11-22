@@ -338,7 +338,9 @@ async function updateCarryOvers() {
 
       const unused = currentPto - usedLastYear;
 
-      carryOver = unused > 0 ? 1 : 0;
+      if (unused > 0) {
+        carryOver = Math.min(unused, 3);
+      }
     }
 
     //   2. GET POLICY TIER
@@ -375,8 +377,8 @@ async function updateCarryOvers() {
 
       // MOVE OLD PTO INTO HISTORY
       await db.query(
-        `INSERT INTO pto_history (user_id, date, hours_used, approved_by, created_at)
-          SELECT user_id, date, hours_used, approved_by, created_at
+        `INSERT INTO pto_history (user_id, date, hours_used, created_at)
+          SELECT user_id, date, hours_used, created_at
           FROM pto
           WHERE user_id = ?;`,
         [user.id]

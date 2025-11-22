@@ -40,10 +40,10 @@ button {
 
 form button:hover,
 button:hover {
-  background-color: #2563eb;
+  background-color: #3877c9;
 }
 button {
-  background: #004aad;
+  background: #3066ab;
   color: white;
   border: none;
   padding: 8px 12px;
@@ -82,7 +82,7 @@ table tbody tr:nth-child(even) {
 
 /* nav bars, desktop and mobile */
 .navbar {
-  background: #004aad;
+  background: #3066ab;
   color: white;
   padding: 10px 20px;
   display: flex;
@@ -116,10 +116,10 @@ table tbody tr:nth-child(even) {
   top: 45px;
   right: 0;
   transform: translateX(0);
-  width: 300px;
+  width: 350px;
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 1rem;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -139,9 +139,9 @@ table tbody tr:nth-child(even) {
 #logoutMobile {
   text-align: left;
   padding: 10px 12px;
-  background: #3b82f6;
+  background: #3066ab;
   border: none;
-  border-radius: 6px;
+  border-radius: 1rem;
   cursor: pointer;
   font-size: 0.95rem;
 }
@@ -177,8 +177,9 @@ table tbody tr:nth-child(even) {
 
 /* Desktop Pto History Admin and Employee*/
 #pto-history,
-#current-pto-policy {
-  margin-left: 15px;
+#current-pto-policy,
+#ptoNote {
+  margin: 15px;
 }
 
 /* PTO Overview container */
@@ -385,7 +386,7 @@ table tbody tr:nth-child(even) {
 
 .policy-header {
   width: 100%;
-  background: #2563eb;
+  background: #040e22;
   color: white;
   padding: 12px 15px;
   font-size: 1rem;
@@ -449,6 +450,55 @@ table tbody tr:nth-child(even) {
 .delete-btn:hover {
   background-color: #b02a37;
 }
+
+/*employee.html*/
+
+#holidays {
+  display: flex;
+}
+
+#holidays div {
+  width: 100%;
+  padding: 0 2rem;
+  gap: 0;
+}
+#holidaysBoxTwo {
+  display: grid;
+  margin: 0 2rem 0 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  position: relative;
+  list-style: none;
+  text-align: center;
+}
+
+ul::before {
+  content: "";
+  width: 0.5rem;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  background: #262d3c;
+  z-index: -1;
+}
+
+li {
+  padding: 1rem 1.5rem 1rem;
+  border-radius: 1rem;
+  background: #5e9747;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+
+li + li {
+  margin-top: 0.5rem;
+}
+
 /* Responsive for mobile */
 @media (max-width: 600px) {
   table th,
@@ -510,6 +560,15 @@ table tbody tr:nth-child(even) {
 
   .policy-header {
     font-size: 1.1rem;
+  }
+  /*employee.html*/
+  #holidays {
+    display: grid;
+  }
+
+  #holidays div {
+    width: 100%;
+    padding: 0;
   }
 }
 

@@ -103,6 +103,7 @@ function loadHolidays() {
   let holidayObservance = [
     "When a holiday falls on a Saturday, it will be observed the preceding Friday.",
     "Holidays falling on a Sunday will be observed the following Monday.",
+    "If you work on your birthday, you are allowed to request a different day off",
   ];
 
   let paidHolidaysList = document.getElementById("paidHolidays");

@@ -69,7 +69,7 @@ app.use((req, res, next) => {
     "/api/login",
     "/css/",
     "/js/",
-    "/images/",
+    "/assets/",
     "/favicon.ico",
   ];
 

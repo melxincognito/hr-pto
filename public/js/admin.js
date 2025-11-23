@@ -110,7 +110,7 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
     document.getElementById("ptoDate").value = "";
     document.getElementById("ptoHours").value = 8;
     await loadSummary();
-    await loadUpcoming();
+    await loadPtoBook();
   } else {
     alert("Error adding PTO entry.");
   }
@@ -161,10 +161,85 @@ async function loadSummary() {
   });
 }
 
+// Load PTO Book, this is the PTO history for just the year - Grouped by Month
+async function loadPtoBook() {
+  const res = await fetch("/api/admin/upcoming");
+  const data = await res.json();
+
+  const tbody = document.querySelector("#upcomingTable tbody");
+  tbody.innerHTML = "";
+
+  // Group PTO entries by month
+  const groupedByMonth = {};
+
+  data.forEach((pto) => {
+    const date = new Date(pto.date);
+    const monthYear = date.toLocaleString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+
+    if (!groupedByMonth[monthYear]) {
+      groupedByMonth[monthYear] = [];
+    }
+    groupedByMonth[monthYear].push(pto);
+  });
+
+  // Render each month group
+  Object.keys(groupedByMonth).forEach((monthYear) => {
+    // Add month header row
+    tbody.innerHTML += `
+      <tr class="monthHeader">
+        <td colspan="3"><strong>${monthYear}</strong></td>
+      </tr>
+    `;
+
+    // Add PTO entries for this month
+    groupedByMonth[monthYear].forEach((pto) => {
+      const date = new Date(pto.date);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${pto.full_name}</td>
+          <td>${formattedDate}</td>
+          <td>
+            <button class="deleteBtn" data-id="${pto.id}">X</button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+
+  // Attach delete event listeners
+  document.querySelectorAll(".deleteBtn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (confirm("Are you sure you want to delete this PTO entry?")) {
+        const res = await fetch(`/api/admin/pto/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          alert("PTO entry deleted!");
+          await loadPtoBook();
+          await loadSummary();
+        } else {
+          alert("Error deleting PTO entry.");
+        }
+      }
+    });
+  });
+}
+/*
 // Load Upcoming PTO
 async function loadUpcoming() {
   const res = await fetch("/api/admin/upcoming");
   const data = await res.json();
+  
 
   const tbody = document.querySelector("#upcomingTable tbody");
   tbody.innerHTML = "";
@@ -197,7 +272,7 @@ async function loadUpcoming() {
     });
   });
 }
-
+*/
 // PTO Past Years History
 async function loadPastPtoHistory() {
   const res = await fetch("/api/admin/pastptohistory");
@@ -339,6 +414,6 @@ async function loadPolicies() {
 
 loadEmployees();
 loadSummary();
-loadUpcoming();
+loadPtoBook();
 loadPastPtoHistory();
 loadPolicies();

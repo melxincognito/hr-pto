@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,42 +11,45 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/styles.css" />
     <script src="js/settings.js" defer></script>
   </head>
   <body>
     <div class="navbar">
       <h2>Account Settings</h2>
-      <div class="mobile-nav">
+      <div class="mobileNav">
         <button id="hamburgerBtn" class="hamburger">☰</button>
-        <div id="mobileMenu" class="mobile-menu hidden">
-          <button id="dashboardMobile">Dashboard</button>
-          <button id="settingsMobile">Settings</button>
-          <button id="logoutMobile" class="logout-btn">Logout</button>
+        <div id="mobileMenu" class="mobileMenu hidden">
+          <button id="dashboardMobile" class="mobileDashboardBtn">
+            Dashboard
+          </button>
+          <button id="settingsMobile" class="mobileSettingsBtn">
+            Settings
+          </button>
+          <button id="logoutMobile" class="mobileLogoutBtn">Logout</button>
         </div>
       </div>
-      <div class="desktop-nav">
+      <div class="desktopNav">
         <button id="dashboardBtn">Dashboard</button>
         <button id="settingsBtn">Settings</button>
-        <button id="logoutBtn" class="logoutBtnEmployee">Logout</button>
+        <button id="logoutBtn" class="logoutBtn">Logout</button>
       </div>
     </div>
 
-    <div class="container settings-container">
+    <div class="container settingsContainer">
       <h3>Change Password</h3>
 
-      <form id="passwordForm" class="settings-form">
-        <div class="floating-group">
-          <input type="password" id="old_password" placeholder=" " required />
-          <label for="old_password">Current Password</label>
+      <form id="passwordForm" class="settingsForm">
+        <div class="floatingGroup">
+          <input type="password" id="oldPassword" placeholder=" " required />
+          <label for="oldPassword">Current Password</label>
         </div>
 
-        <div class="floating-group">
-          <input type="password" id="new_password" placeholder=" " required />
-          <label for="new_password">New Password</label>
+        <div class="floatingGroup">
+          <input type="password" id="newPassword" placeholder=" " required />
+          <label for="newPassword">New Password</label>
         </div>
 
-        <button type="submit" class="save-btn">Update Password</button>
+        <button type="submit" class="saveBtn">Update Password</button>
 
         <p id="settingsError" class="error"></p>
         <p id="settingsSuccess" class="success"></p>

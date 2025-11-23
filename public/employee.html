@@ -16,31 +16,37 @@
   <body>
     <div class="navbar">
       <h2>Employee Dashboard</h2>
-      <div class="mobile-nav">
+      <div class="mobileNav">
         <button id="hamburgerBtn" class="hamburger">☰</button>
-        <div id="mobileMenu" class="mobile-menu hidden">
-          <button id="dashboardMobile">Dashboard</button>
-          <button id="settingsMobile">Settings</button>
-          <button id="logoutMobile" class="logout-btn">Logout</button>
+        <div id="mobileMenu" class="mobileMenu hidden">
+          <button id="dashboardMobile" class="mobileDashboardBtn">
+            Dashboard
+          </button>
+          <button id="settingsMobile" class="mobileSettingsBtn">
+            Settings
+          </button>
+          <button id="logoutMobile" class="mobileLogoutBtn">Logout</button>
         </div>
       </div>
-      <div class="desktop-nav">
+      <div class="desktopNav">
         <button id="dashboardBtn">Dashboard</button>
         <button id="settingsBtn">Settings</button>
-        <button id="logoutBtn" class="logoutBtnEmployee">Logout</button>
+        <button id="logoutBtn" class="logoutBtn">Logout</button>
       </div>
     </div>
 
     <div class="container">
-      <section id="overview">
+      <section id="ptoOverview">
         <h3>PTO Overview</h3>
-        <p><strong>PTO Allowed:</strong> <span id="total"></span> days</p>
-        <p><strong>PTO Used:</strong> <span id="used"></span> days</p>
-        <p><strong>PTO Remaining:</strong> <span id="remaining"></span> days</p>
+        <p><strong>PTO Allowed:</strong> <span id="totalPto"></span> days</p>
+        <p><strong>PTO Used:</strong> <span id="usedPto"></span> days</p>
+        <p>
+          <strong>PTO Remaining:</strong> <span id="remainingPto"></span> days
+        </p>
       </section>
 
-      <section id="history">
-        <h3 id="pto-history">PTO History</h3>
+      <section id="ptoHistorySection">
+        <h3 class="ptoHistory">PTO History</h3>
         <table id="historyTable">
           <thead>
             <tr>
@@ -52,7 +58,7 @@
         </table>
       </section>
 
-      <section id="ptoNote">
+      <section id="ptoNote" class="ptoNote">
         <h3>PTO Note</h3>
         <p>
           All PTO requests must be approved by your direct supervisor in
@@ -63,7 +69,7 @@
         </p>
         <p>
           Additionally, employees are not eligible to use PTO within the first
-          <b> 90 days</b> of employment and the use of your full PTO allowance
+          <b>90 days</b> of employment and the use of your full PTO allowance
           within the first six months of employment may not be permitted.
           Approval will be based on business needs and manager discretion.
           <b>
@@ -76,16 +82,16 @@
 
       <section id="holidays">
         <div>
-          <h3 id="current-pto-policy">Paid Holidays</h3>
+          <h3 class="currentPtoPolicy">Paid Holidays</h3>
           <ul id="paidHolidays"></ul>
         </div>
         <div id="holidaysBoxTwo">
           <div id="holidayObservanceBox">
-            <h3 id="current-pto-policy">Holiday Observance</h3>
+            <h3 class="currentPtoPolicy">Holiday Observance</h3>
             <ul id="holidayObservance"></ul>
           </div>
           <div>
-            <h3 id="current-pto-policy">Bereavement Leave</h3>
+            <h3 class="currentPtoPolicy">Bereavement Leave</h3>
             <ul id="bereavement">
               <li>
                 SchoolsPLP recognizes the importance of taking leave when there
@@ -102,7 +108,8 @@
           </div>
         </div>
       </section>
-      <section id="policy" class="tab-content">
+
+      <section id="policySection" class="tabContent">
         <h3>Current PTO Policy</h3>
         <table id="policyTable">
           <thead>
@@ -115,7 +122,7 @@
           <tbody></tbody>
         </table>
       </section>
-      <div id="policyMobileContainer" class="mobile-policy hidden"></div>
+      <div id="policyMobileContainer" class="mobilePolicy hidden"></div>
     </div>
   </body>
 </html>

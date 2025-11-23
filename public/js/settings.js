@@ -11,9 +11,11 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   sessionStorage.clear();
   window.location.href = "/login.html";
 });
+
 document.getElementById("dashboardMobile").addEventListener("click", () => {
   window.location.href = "/employee.html";
 });
+
 document.getElementById("settingsMobile").addEventListener("click", () => {
   window.location.href = "/settings.html";
 });
@@ -35,13 +37,16 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const old_password = document.getElementById("old_password").value;
-    const new_password = document.getElementById("new_password").value;
+    const oldPassword = document.getElementById("oldPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
 
     const res = await fetch("/api/employee/change-password", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ old_password, new_password }),
+      body: JSON.stringify({
+        old_password: oldPassword,
+        new_password: newPassword,
+      }),
     });
 
     const data = await res.json();

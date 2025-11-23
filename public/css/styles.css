@@ -1,11 +1,19 @@
-/* General */
+/* ===========================
+   GENERAL & RESET
+   =========================== */
 body {
-  font-family: "Montserrat";
+  font-family: "Montserrat", sans-serif;
   margin: 0;
   background: #f7f8fa;
 }
 
-/* Form inputs */
+.hidden {
+  display: none;
+}
+
+/* ===========================
+   FORMS & INPUTS
+   =========================== */
 form input,
 form select,
 form button,
@@ -46,7 +54,186 @@ button:hover {
   background-color: #3877c9;
 }
 
-/* Table styling */
+/* Floating Labels */
+.floatingGroup {
+  position: relative;
+  margin: 20px 0;
+}
+
+.floatingGroup input,
+.floatingGroup select {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  background: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.25s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.floatingGroup input:focus,
+.floatingGroup select:focus {
+  border-color: #2563eb;
+}
+
+.floatingGroup label {
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  font-size: 0.75rem;
+  color: #3066ab;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.872);
+  padding: 0 4px;
+}
+
+/* ===========================
+   BUTTONS
+   =========================== */
+.deleteBtn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  width: 100%;
+}
+
+.deleteBtn:hover {
+  background-color: #b02a37;
+}
+
+.savePolicy {
+  width: 100%;
+}
+
+.logoutBtn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.logoutBtn:hover {
+  background-color: #dc2626;
+}
+
+/* ===========================
+   NAVIGATION
+   =========================== */
+.navbar {
+  background: #3066ab;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0px 0px 18px 4px rgba(0, 0, 0, 0.53);
+}
+
+.desktopNav {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  gap: 2rem;
+}
+
+.mobileNav {
+  display: none;
+  position: relative;
+}
+
+.hamburger {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  color: white;
+}
+
+.mobileMenu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  transform: translateX(0);
+  width: 350px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.mobileTabBtn,
+.mobileDashboardBtn,
+.mobileSettingsBtn,
+.mobileLogoutBtn {
+  text-align: left;
+  padding: 10px 12px;
+  background: #3066ab;
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.mobileTabBtn:hover,
+.mobileDashboardBtn:hover,
+.mobileSettingsBtn:hover {
+  background: #3877c9;
+}
+
+.mobileLogoutBtn {
+  background: #ef4444;
+}
+
+.mobileLogoutBtn:hover {
+  background: #dc2626;
+}
+
+.tabBtn {
+  margin: 5px;
+}
+
+/* ===========================
+   LAYOUT & CONTAINERS
+   =========================== */
+.container {
+  padding: 20px;
+}
+
+.tabContent {
+  padding: 20px;
+}
+
+.loginContainer {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+  margin-top: 1rem;
+}
+
+.settingsContainer {
+  max-width: 450px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================
+   TABLES
+   =========================== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -74,111 +261,10 @@ table tbody tr:nth-child(even) {
   background-color: #ededed;
 }
 
-/* nav bars, desktop and mobile */
-.navbar {
-  background: #3066ab;
-  color: white;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  box-shadow: 0px 0px 18px 4px rgba(0, 0, 0, 0.53);
-}
-
-.desktop-nav {
-  display: flex;
-  align-items: center;
-  justify-items: center;
-  gap: 2rem;
-}
-
-.mobile-nav {
-  display: none;
-  position: relative;
-}
-
-/* Hamburger Icon */
-.hamburger {
-  font-size: 28px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-}
-
-.mobile-menu {
-  position: absolute;
-  top: 45px;
-  right: 0;
-  transform: translateX(0);
-  width: 350px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 1rem;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 999;
-}
-
-.mobile-menu.hidden,
-.hidden {
-  display: none;
-}
-
-.mobile-tab-btn,
-#dashboardMobile,
-#settingsMobile,
-#logoutMobile {
-  text-align: left;
-  padding: 10px 12px;
-  background: #3066ab;
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.mobile-tab-btn:hover {
-  background: #e2e8f0;
-}
-
-#logoutMobile {
-  background: #ef4444;
-  color: white;
-}
-
-#logoutMobile:hover {
-  background: #dc2626;
-}
-
-.login-container {
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
-  justify-items: center;
-  margin-top: 1rem;
-}
-
-.tab-btn {
-  margin: 5px;
-}
-
-.tab-content {
-  padding: 20px;
-}
-
-/* Desktop Pto History Admin and Employee*/
-#pto-history,
-#current-pto-policy,
-#ptoNote {
-  margin: 15px;
-}
-
-/* PTO Overview container */
-#overview {
+/* ===========================
+   PTO OVERVIEW (Employee Dashboard)
+   =========================== */
+#ptoOverview {
   background-color: #ffffff;
   border-radius: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -190,13 +276,12 @@ table tbody tr:nth-child(even) {
   align-content: center;
 }
 
-#overview:hover {
+#ptoOverview:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
-/* Title */
-#overview h3 {
+#ptoOverview h3 {
   font-size: 1.4rem;
   color: #1e293b;
   margin-bottom: 1.25rem;
@@ -205,15 +290,13 @@ table tbody tr:nth-child(even) {
   padding-bottom: 0.25rem;
 }
 
-/* Stat lines */
-#overview p {
+#ptoOverview p {
   font-size: 1.1rem;
   margin: 0.75rem 0;
   color: #334155;
 }
 
-/* Highlighted values */
-#overview span {
+#ptoOverview span {
   display: inline-block;
   min-width: 40px;
   font-weight: 600;
@@ -223,23 +306,30 @@ table tbody tr:nth-child(even) {
   padding: 0.3rem 0.6rem;
 }
 
-/* Optional: add color accents for clarity */
-#total {
+#totalPto {
   background-color: #dbeafe;
   color: #1e40af;
 }
 
-#used {
+#usedPto {
   background-color: #fee2e2;
   color: #b91c1c;
 }
 
-#remaining {
+#remainingPto {
   background-color: #dcfce7;
   color: #166534;
 }
 
-/* Table container */
+/* ===========================
+   HISTORY & POLICY SECTIONS
+   =========================== */
+.ptoHistory,
+.currentPtoPolicy,
+.ptoNote {
+  margin: 15px;
+}
+
 #historyTableContainer {
   margin-top: 2rem;
   max-width: 700px;
@@ -252,73 +342,19 @@ table tbody tr:nth-child(even) {
   padding: 1rem 1rem 0 1rem;
 }
 
-/* admin.html pto summary section. Hidden on Desktop */
-.mobile-summary {
-  display: none;
-}
-
-.summary-card {
-  border: 1px solid #e2e8f0;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  background: white;
-  overflow: hidden;
-}
-
-.summary-header {
-  width: 100%;
-  background: #2563eb;
-  padding: 12px 15px;
-  font-size: 1rem;
-  border: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.summary-header .arrow {
-  transition: transform 0.2s ease;
-}
-
-.arrow-employee {
-  right: 3%;
-  position: absolute;
-}
-
-.summary-header .arrow.rotated {
-  transform: rotate(180deg);
-}
-
-/* Content inside card */
-.summary-body {
-  padding: 15px;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.summary-body.open {
-  display: flex;
-}
-
-.summary-body div {
-  font-size: 0.95rem;
-}
-
-/* admin.html past pto summary */
-
-/* Accordion container */
+/* ===========================
+   ACCORDION (Admin Past PTO)
+   =========================== */
 .accordion {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-/* Employee button */
-.accordion-header {
+.accordionHeader {
   width: 100%;
   background: #5e9747;
+  color: white;
   border: none;
   padding: 0.9rem 1rem;
   font-size: 1rem;
@@ -329,49 +365,95 @@ table tbody tr:nth-child(even) {
   transition: background 0.2s;
 }
 
-.accordion-header:hover {
-  background: #e2e8f0;
+.accordionHeader:hover {
+  background: #4d7e39;
 }
 
-/* Expanded indicator */
-.accordion-header::after {
+.accordionHeader::after {
   content: "▼";
   float: right;
   transition: transform 0.2s;
 }
 
-.accordion-header.open::after {
+.accordionHeader.open::after {
   transform: rotate(180deg);
 }
 
-/* Hidden content */
-.accordion-body {
+.accordionBody {
   background: #ffffff;
   padding: 0.75rem 1rem;
   border-left: 3px solid #94a3b8;
   border-radius: 0 0 8px 8px;
 }
 
-/* Hide content by default */
-.hidden {
-  display: none;
-}
-
-/* Individual rows */
-.history-row {
+.historyRow {
   padding: 0.35rem 0;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.history-row:last-child {
+.historyRow:last-child {
   border-bottom: none;
 }
-/*admin.html policy section*/
-.mobile-policy {
+
+/* ===========================
+   SUMMARY CARDS (Mobile Admin)
+   =========================== */
+.mobileSummary {
   display: none;
 }
 
-.policy-card {
+.summaryCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: white;
+  overflow: hidden;
+}
+
+.summaryHeader {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.summaryHeader .arrow {
+  transition: transform 0.2s ease;
+}
+
+.summaryHeader .arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.summaryBody {
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryBody.open {
+  display: flex;
+}
+
+.summaryBody div {
+  font-size: 0.95rem;
+}
+
+/* ===========================
+   POLICY CARDS
+   =========================== */
+.mobilePolicy {
+  display: none;
+}
+
+.policyCard {
   border: 1px solid #e2e8f0;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -379,7 +461,7 @@ table tbody tr:nth-child(even) {
   overflow: hidden;
 }
 
-.policy-header {
+.policyHeader {
   width: 100%;
   background: #040e22;
   color: white;
@@ -389,35 +471,41 @@ table tbody tr:nth-child(even) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 }
 
-.policy-header .arrow {
+.policyHeader .arrow {
   transition: transform 0.2s ease;
 }
 
-.policy-body {
+.arrowEmployee {
+  right: 3%;
+  position: absolute;
+}
+
+.policyBody {
   padding: 15px;
   display: none;
   flex-direction: column;
   gap: 10px;
 }
 
-.policy-body.open {
+.policyBody.open {
   display: flex;
 }
 
-.policy-body label {
+.policyBody label {
   font-weight: 600;
   margin-top: 5px;
 }
 
-.policy-body input {
+.policyBody input {
   padding: 8px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
 }
 
-.policy-body button {
+.policyBody button {
   margin-top: 10px;
   padding: 10px;
   background: #2563eb;
@@ -426,28 +514,9 @@ table tbody tr:nth-child(even) {
   border-radius: 6px;
 }
 
-/* Update Policy */
-.savePolicy {
-  width: 100%;
-}
-
-/* employee summary section admin */
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: 0.2s;
-  width: 100%;
-}
-.delete-btn:hover {
-  background-color: #b02a37;
-}
-
-/*employee.html*/
-
+/* ===========================
+   HOLIDAYS (Employee Page)
+   =========================== */
 #holidays {
   display: flex;
 }
@@ -457,6 +526,7 @@ table tbody tr:nth-child(even) {
   padding: 0 2rem;
   gap: 0;
 }
+
 #holidaysBoxTwo {
   display: grid;
   margin: 0 2rem 0 0;
@@ -494,38 +564,60 @@ li + li {
   margin-top: 0.5rem;
 }
 
-/* Responsive for mobile */
+/* ===========================
+   ERROR & SUCCESS MESSAGES
+   =========================== */
+.error {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.success {
+  color: #28a745;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* ===========================
+   RESPONSIVE (MOBILE)
+   =========================== */
 @media (max-width: 600px) {
-  .login-container img {
+  /* Login */
+  .loginContainer img {
     height: 80%;
     width: 80%;
   }
-  table th,
-  table td {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
-  }
-  /* login.html */
-  .login-container {
+
+  .loginContainer {
     display: block;
     text-align: center;
   }
+
   #loginForm {
     width: 90%;
     padding: 5%;
   }
 
-  #logoutBtn {
-    height: 50%;
-    margin-top: 5%;
+  /* Tables */
+  table th,
+  table td {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
   }
 
-  /* admin.html */
-
-  .mobile-nav {
-    display: block; /* show hamburger */
+  /* Navigation */
+  .mobileNav {
+    display: block;
   }
-  /*mobile date input is showing weird*/
+
+  .desktopNav,
+  .tabBtn,
+  .logoutBtnDesktop {
+    display: none;
+  }
+
+  /* Date Input Fix */
   input[type="date"] {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -544,23 +636,22 @@ li + li {
     display: none;
   }
 
+  /* Admin Tables/Cards */
   #policyTable,
-  #summaryTable,
-  .tab-btn,
-  .desktop-nav,
-  #logoutBtn {
+  #summaryTable {
     display: none;
   }
 
-  .mobile-policy,
-  .mobile-summary {
+  .mobilePolicy,
+  .mobileSummary {
     display: block;
   }
 
-  .policy-header {
+  .policyHeader {
     font-size: 1.1rem;
   }
-  /*employee.html*/
+
+  /* Employee Holidays */
   #holidays {
     display: grid;
   }
@@ -569,60 +660,4 @@ li + li {
     width: 100%;
     padding: 0;
   }
-}
-
-/* floating labels */
-.floating-group {
-  position: relative;
-  margin: 20px 0;
-}
-
-/* Input field */
-input {
-  width: 100%;
-  border: 1px solid #cbd5e1;
-  border-radius: 1rem;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.25s;
-}
-/* Base select */
-.floating-group select {
-  width: 100%;
-  border: 1px solid #cbd5e1;
-  border-radius: 1rem;
-  background: white;
-  font-size: 1rem;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  transition: border-color 0.25s;
-}
-
-/* Focus border */
-.floating-group input:focus,
-select:focus {
-  border-color: #2563eb;
-}
-
-.floating-group label {
-  position: absolute;
-  top: -8px;
-  left: 10px;
-  font-size: 0.75rem;
-  color: #3066ab;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.872);
-  padding: 0 4px;
-}
-
-/* Settings */
-
-.settings-container {
-  max-width: 450px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }

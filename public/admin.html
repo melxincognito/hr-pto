@@ -11,62 +11,57 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/styles.css" />
     <script src="js/admin.js" defer></script>
   </head>
   <body>
     <div class="navbar">
       <h2>Admin Dashboard</h2>
-      <div class="mobile-nav">
+      <div class="mobileNav">
         <button id="hamburgerBtn" class="hamburger">☰</button>
-        <div id="mobileMenu" class="mobile-menu hidden">
-          <button class="mobile-tab-btn" data-tab="employees">Employees</button>
-          <button class="mobile-tab-btn" data-tab="pto">PTO Entries</button>
-          <button class="mobile-tab-btn" data-tab="summary">PTO Summary</button>
-          <button class="mobile-tab-btn" data-tab="upcoming">
-            Upcoming PTO
-          </button>
-          <button class="mobile-tab-btn" data-tab="past-pto">
-            PTO History
-          </button>
-          <button class="mobile-tab-btn" data-tab="policy">PTO Policy</button>
-          <button id="logoutMobile" class="logout-btn">Logout</button>
+        <div id="mobileMenu" class="mobileMenu hidden">
+          <button class="mobileTabBtn" data-tab="employees">Employees</button>
+          <button class="mobileTabBtn" data-tab="pto">PTO Entries</button>
+          <button class="mobileTabBtn" data-tab="summary">PTO Summary</button>
+          <button class="mobileTabBtn" data-tab="upcoming">Upcoming PTO</button>
+          <button class="mobileTabBtn" data-tab="pastPto">PTO History</button>
+          <button class="mobileTabBtn" data-tab="policy">PTO Policy</button>
+          <button id="logoutMobile" class="mobileLogoutBtn">Logout</button>
         </div>
       </div>
 
-      <button class="tab-btn" data-tab="employees">Employees</button>
-      <button class="tab-btn" data-tab="pto">PTO Entries</button>
-      <button class="tab-btn" data-tab="summary">PTO Summary</button>
-      <button class="tab-btn" data-tab="upcoming">Upcoming PTO</button>
-      <button class="tab-btn" data-tab="past-pto">PTO History</button>
-      <button class="tab-btn" data-tab="policy">PTO Policy</button>
+      <button class="tabBtn" data-tab="employees">Employees</button>
+      <button class="tabBtn" data-tab="pto">PTO Entries</button>
+      <button class="tabBtn" data-tab="summary">PTO Summary</button>
+      <button class="tabBtn" data-tab="upcoming">Upcoming PTO</button>
+      <button class="tabBtn" data-tab="pastPto">PTO History</button>
+      <button class="tabBtn" data-tab="policy">PTO Policy</button>
 
-      <button class="tab-btn" id="logoutBtn">Logout</button>
+      <button class="tabBtn logoutBtn" id="logoutBtn">Logout</button>
     </div>
 
     <div id="content">
       <!-- EMPLOYEES -->
-      <div id="employees" class="tab-content">
+      <div id="employees" class="tabContent">
         <h3>Employees</h3>
         <form id="addEmployeeForm">
-          <div class="floating-group">
-            <input type="text" id="full_name" placeholder=" " required />
-            <label for="full_name"> Employee's Full Name:</label>
+          <div class="floatingGroup">
+            <input type="text" id="fullName" placeholder=" " required />
+            <label for="fullName">Employee's Full Name:</label>
           </div>
 
-          <div class="floating-group">
+          <div class="floatingGroup">
             <input type="text" id="username" placeholder=" " required />
             <label for="username">Employee's Username:</label>
           </div>
 
-          <div class="floating-group">
+          <div class="floatingGroup">
             <input type="password" id="password" placeholder=" " required />
-            <label for="password"> Temp Password:</label>
+            <label for="password">Temp Password:</label>
           </div>
 
-          <div class="floating-group">
-            <input type="date" id="start_date" placeholder=" " required />
-            <label for="start_date">Employee Start Date:</label>
+          <div class="floatingGroup">
+            <input type="date" id="startDate" placeholder=" " required />
+            <label for="startDate">Employee Start Date:</label>
           </div>
 
           <button type="submit">Add Employee</button>
@@ -84,21 +79,21 @@
       </div>
 
       <!-- PTO -->
-      <div id="pto" class="tab-content hidden">
+      <div id="pto" class="tabContent hidden">
         <h3>Add PTO Entry</h3>
         <form id="addPtoForm">
-          <div class="floating-group">
-            <select id="pto_user"></select>
-            <label for="pto_user">Employee:</label>
+          <div class="floatingGroup">
+            <select id="ptoUser"></select>
+            <label for="ptoUser">Employee:</label>
           </div>
 
-          <div class="floating-group">
-            <input type="date" id="pto_date" required />
-            <label for="pto_date"> PTO Date:</label>
+          <div class="floatingGroup">
+            <input type="date" id="ptoDate" required />
+            <label for="ptoDate">PTO Date:</label>
           </div>
-          <div class="floating-group">
-            <input type="number" id="pto_hours" value="8" required />
-            <label for="pto_hours">Hours:</label>
+          <div class="floatingGroup">
+            <input type="number" id="ptoHours" value="8" required />
+            <label for="ptoHours">Hours:</label>
           </div>
 
           <button type="submit">Add PTO</button>
@@ -106,7 +101,7 @@
       </div>
 
       <!-- SUMMARY -->
-      <div id="summary" class="tab-content hidden">
+      <div id="summary" class="tabContent hidden">
         <h3>PTO Summary</h3>
         <table id="summaryTable">
           <thead>
@@ -119,31 +114,32 @@
           </thead>
           <tbody></tbody>
         </table>
-        <div id="summaryMobileContainer" class="mobile-summary hidden"></div>
+        <div id="summaryMobileContainer" class="mobileSummary hidden"></div>
       </div>
 
       <!-- UPCOMING -->
-      <div id="upcoming" class="tab-content hidden">
+      <div id="upcoming" class="tabContent hidden">
         <h3>Upcoming PTO</h3>
         <table id="upcomingTable">
           <thead>
             <tr>
               <th>Employee</th>
               <th>Date</th>
-              <th id="delete-pto">Delete</th>
+              <th id="deletePto">Delete</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
+
       <!-- Past PTO -->
-      <div id="past-pto" class="tab-content hidden">
+      <div id="pastPto" class="tabContent hidden">
         <h3>PTO History</h3>
         <div id="pastPtoContainer" class="accordion"></div>
       </div>
 
       <!-- POLICY -->
-      <div id="policy" class="tab-content hidden">
+      <div id="policy" class="tabContent hidden">
         <h3>PTO Policy</h3>
         <table id="policyTable">
           <thead>
@@ -156,7 +152,7 @@
           </thead>
           <tbody></tbody>
         </table>
-        <div id="policyMobileContainer" class="mobile-policy hidden"></div>
+        <div id="policyMobileContainer" class="mobilePolicy hidden"></div>
       </div>
     </div>
   </body>

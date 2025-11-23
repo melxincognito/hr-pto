@@ -1,13 +1,13 @@
 // UNIVERSAL TAB SWITCHING
 function showTab(tabName) {
-  document.querySelectorAll(".tab-content").forEach((c) => {
+  document.querySelectorAll(".tabContent").forEach((c) => {
     c.classList.add("hidden");
   });
   document.getElementById(tabName).classList.remove("hidden");
 }
 
 // DESKTOP TABS
-document.querySelectorAll(".tab-btn").forEach((btn) => {
+document.querySelectorAll(".tabBtn").forEach((btn) => {
   btn.addEventListener("click", () => {
     showTab(btn.dataset.tab);
   });
@@ -26,7 +26,7 @@ document.getElementById("hamburgerBtn").addEventListener("click", () => {
 });
 
 // MOBILE TABS
-document.querySelectorAll(".mobile-tab-btn").forEach((btn) => {
+document.querySelectorAll(".mobileTabBtn").forEach((btn) => {
   btn.addEventListener("click", () => {
     showTab(btn.dataset.tab);
     document.getElementById("mobileMenu").classList.add("hidden");
@@ -46,7 +46,7 @@ async function loadEmployees() {
   const data = await res.json();
 
   const tbody = document.querySelector("#employeeTable tbody");
-  const select = document.getElementById("pto_user");
+  const select = document.getElementById("ptoUser");
   tbody.innerHTML = "";
   select.innerHTML = "";
 
@@ -65,10 +65,10 @@ document
     e.preventDefault();
 
     const body = {
-      full_name: document.getElementById("full_name").value,
+      full_name: document.getElementById("fullName").value,
       username: document.getElementById("username").value,
       password: document.getElementById("password").value,
-      start_date: document.getElementById("start_date").value,
+      start_date: document.getElementById("startDate").value,
     };
 
     const res = await fetch("/api/admin/employees", {
@@ -79,11 +79,12 @@ document
 
     if (res.ok) {
       alert("Employee added successfully!");
-      document.getElementById("full_name").value = "";
+      document.getElementById("fullName").value = "";
       document.getElementById("username").value = "";
       document.getElementById("password").value = "";
-      document.getElementById("start_date").value = "";
-      await loadEmployees(), loadSummary();
+      document.getElementById("startDate").value = "";
+      await loadEmployees();
+      await loadSummary();
     } else {
       alert("Error adding employee.");
     }
@@ -93,9 +94,9 @@ document
 document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const body = {
-    user_id: document.getElementById("pto_user").value,
-    date: document.getElementById("pto_date").value,
-    hours_used: document.getElementById("pto_hours").value,
+    user_id: document.getElementById("ptoUser").value,
+    date: document.getElementById("ptoDate").value,
+    hours_used: document.getElementById("ptoHours").value,
   };
 
   const res = await fetch("/api/admin/pto", {
@@ -106,9 +107,10 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
 
   if (res.ok) {
     alert("PTO entry added!");
-    document.getElementById("pto_date").value = "";
-    document.getElementById("pto_hours").value = 8;
-    await loadSummary(), loadUpcoming();
+    document.getElementById("ptoDate").value = "";
+    document.getElementById("ptoHours").value = 8;
+    await loadSummary();
+    await loadUpcoming();
   } else {
     alert("Error adding PTO entry.");
   }
@@ -118,25 +120,27 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
 async function loadSummary() {
   const res = await fetch("/api/admin/summary");
   const data = await res.json();
+
   // Desktop Layout
   const tbody = document.querySelector("#summaryTable tbody");
   tbody.innerHTML = "";
   data.forEach((row) => {
     tbody.innerHTML += `<tr><td>${row.full_name}</td><td>${row.total_allowed}</td><td>${row.used}</td><td>${row.remaining}</td></tr>`;
   });
+
   // MOBILE CARDS
   const mobileContainer = document.querySelector("#summaryMobileContainer");
   mobileContainer.innerHTML = "";
 
   data.forEach((row) => {
     mobileContainer.innerHTML += `
-      <div class="summary-card">
-        <button class="summary-header">
+      <div class="summaryCard">
+        <button class="summaryHeader">
           <span>${row.full_name}</span>
           <span class="arrow">▼</span>
         </button>
 
-        <div class="summary-body">
+        <div class="summaryBody">
           <div><strong>Total Allowed:</strong> ${row.total_allowed}</div>
           <div><strong>Used:</strong> ${row.used}</div>
           <div><strong>Remaining:</strong> ${row.remaining}</div>
@@ -146,7 +150,7 @@ async function loadSummary() {
   });
 
   // Enable expand/collapse
-  document.querySelectorAll(".summary-header").forEach((header) => {
+  document.querySelectorAll(".summaryHeader").forEach((header) => {
     header.addEventListener("click", () => {
       const body = header.nextElementSibling;
       const arrow = header.querySelector(".arrow");
@@ -170,12 +174,12 @@ async function loadUpcoming() {
       10
     )}</td>
       <td>
-        <button class="delete-btn" data-id="${pto.id}">X</button>
+        <button class="deleteBtn" data-id="${pto.id}">X</button>
       </td>
     </tr>`;
   });
 
-  document.querySelectorAll(".delete-btn").forEach((btn) => {
+  document.querySelectorAll(".deleteBtn").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
       if (confirm("Are you sure you want to delete this PTO entry?")) {
@@ -184,7 +188,8 @@ async function loadUpcoming() {
         });
         if (res.ok) {
           alert("PTO entry deleted!");
-          await loadUpcoming(), loadSummary();
+          await loadUpcoming();
+          await loadSummary();
         } else {
           alert("Error deleting PTO entry.");
         }
@@ -194,7 +199,6 @@ async function loadUpcoming() {
 }
 
 // PTO Past Years History
-
 async function loadPastPtoHistory() {
   const res = await fetch("/api/admin/pastptohistory");
   const data = await res.json();
@@ -210,13 +214,13 @@ async function loadPastPtoHistory() {
 
   Object.keys(grouped).forEach((name) => {
     const section = document.createElement("div");
-    section.classList.add("accordion-item");
+    section.classList.add("accordionItem");
 
     section.innerHTML = `
-      <button class="accordion-header">${name}</button>
-      <div class="accordion-body hidden">
+      <button class="accordionHeader">${name}</button>
+      <div class="accordionBody hidden">
         ${grouped[name]
-          .map((pto) => `<p class="history-row">${pto.date.slice(0, 10)}</p>`)
+          .map((pto) => `<p class="historyRow">${pto.date.slice(0, 10)}</p>`)
           .join("")}
       </div>
     `;
@@ -224,7 +228,7 @@ async function loadPastPtoHistory() {
     container.appendChild(section);
   });
 
-  document.querySelectorAll(".accordion-header").forEach((btn) => {
+  document.querySelectorAll(".accordionHeader").forEach((btn) => {
     btn.addEventListener("click", () => {
       const body = btn.nextElementSibling;
       body.classList.toggle("hidden");
@@ -267,7 +271,9 @@ async function loadPolicies() {
       if (res.ok) {
         alert("Policy updated!");
         await loadPolicies();
-      } else alert("Error updating policy");
+      } else {
+        alert("Error updating policy");
+      }
     });
   });
 
@@ -277,13 +283,13 @@ async function loadPolicies() {
 
   data.forEach((p) => {
     mobileContainer.innerHTML += `
-    <div class="policy-card">
-      <button class="policy-header">
+    <div class="policyCard">
+      <button class="policyHeader">
         <span>${p.years_of_service} Years</span>
         <span class="arrow">▼</span>
       </button>
 
-      <div class="policy-body">
+      <div class="policyBody">
         <label>Days Allowed</label>
         <input type="number" class="daysInput" data-id="${p.id}" value="${p.days_allowed}" />
 
@@ -297,7 +303,7 @@ async function loadPolicies() {
   });
 
   // Enable dropdown behavior
-  document.querySelectorAll(".policy-header").forEach((header) => {
+  document.querySelectorAll(".policyHeader").forEach((header) => {
     header.addEventListener("click", () => {
       const body = header.nextElementSibling;
       body.classList.toggle("open");
@@ -324,7 +330,9 @@ async function loadPolicies() {
       if (res.ok) {
         alert("Policy updated!");
         await loadPolicies();
-      } else alert("Error updating policy");
+      } else {
+        alert("Error updating policy");
+      }
     });
   });
 }

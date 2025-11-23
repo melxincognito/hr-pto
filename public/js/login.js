@@ -19,6 +19,6 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       window.location.href = "/employee.html";
     }
   } else {
-    document.getElementById("error").textContent = data.error;
+    document.getElementById("errorMessage").textContent = data.error;
   }
 });

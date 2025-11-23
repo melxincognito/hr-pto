@@ -11,6 +11,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "/login.html";
   window.sessionStorage.clear();
 });
+
 // MOBILE MENU ITEMS
 document.getElementById("hamburgerBtn").addEventListener("click", () => {
   document.getElementById("mobileMenu").classList.toggle("hidden");
@@ -19,6 +20,7 @@ document.getElementById("hamburgerBtn").addEventListener("click", () => {
 document.getElementById("dashboardMobile").addEventListener("click", () => {
   window.location.href = "/employee.html";
 });
+
 document.getElementById("settingsMobile").addEventListener("click", () => {
   window.location.href = "/settings.html";
 });
@@ -33,9 +35,9 @@ async function loadEmployeePTO() {
   const res = await fetch("/api/employee/summary");
   const data = await res.json();
 
-  document.getElementById("total").textContent = data.total_pto_allowed;
-  document.getElementById("used").textContent = data.used;
-  document.getElementById("remaining").textContent = data.remaining;
+  document.getElementById("totalPto").textContent = data.total_pto_allowed;
+  document.getElementById("usedPto").textContent = data.used;
+  document.getElementById("remainingPto").textContent = data.remaining;
 
   const table = document.querySelector("#historyTable tbody");
   table.innerHTML = "";
@@ -62,24 +64,24 @@ async function loadPolicies() {
 
   data.forEach((p) => {
     mobileContainer.innerHTML += `
-    <div class="policy-card">
-      <label class="policy-header">
+    <div class="policyCard">
+      <label class="policyHeader">
        ${p.years_of_service} Years
-        <span class="arrow-employee">▼</span>
+        <span class="arrowEmployee">▼</span>
       </label>
 
-      <div class="policy-body">
+      <div class="policyBody">
         <label>Days Allowed</label>
-        <h3 data-id="${p.id}"/>${p.days_allowed} </h3>
+        <h3 data-id="${p.id}">${p.days_allowed}</h3>
         <label>Notes</label>
-        <h3 class="notesInput" data-id="${p.id}" > ${p.notes} </h3>
+        <h3 class="notesInput" data-id="${p.id}">${p.notes}</h3>
       </div>
     </div>
   `;
   });
 
   // Enable dropdown behavior
-  document.querySelectorAll(".policy-header").forEach((header) => {
+  document.querySelectorAll(".policyHeader").forEach((header) => {
     header.addEventListener("click", () => {
       const body = header.nextElementSibling;
       body.classList.toggle("open");
@@ -100,6 +102,7 @@ function loadHolidays() {
     "Christmas Day",
     "Your Birthday",
   ];
+
   let holidayObservance = [
     "When a holiday falls on a Saturday, it will be observed the preceding Friday.",
     "Holidays falling on a Sunday will be observed the following Monday.",
@@ -111,14 +114,12 @@ function loadHolidays() {
 
   holidays.forEach((h) => {
     let listItem = document.createElement("li");
-
     listItem.innerHTML = h;
     paidHolidaysList.appendChild(listItem);
   });
 
   holidayObservance.forEach((ho) => {
     let listItem = document.createElement("li");
-
     listItem.innerHTML = ho;
     holidayObservanceList.appendChild(listItem);
   });

@@ -401,14 +401,14 @@ table tbody tr:nth-child(even) {
 .summaryCard {
   border: 1px solid #e2e8f0;
   margin-bottom: 12px;
-  border-radius: 10px;
+  border-radius: 1rem;
   background: white;
   overflow: hidden;
 }
 
 .summaryHeader {
   width: 100%;
-  background: #2563eb;
+  background: #5e9747;
   color: white;
   padding: 12px 15px;
   font-size: 1rem;

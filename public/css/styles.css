@@ -96,7 +96,7 @@ button:hover {
   background-color: #dc3545;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 1rem;
   padding: 6px 10px;
   cursor: pointer;
   transition: 0.2s;
@@ -109,15 +109,6 @@ button:hover {
 
 .savePolicy {
   width: 100%;
-}
-
-.logoutBtn {
-  background-color: #ef4444;
-  color: white;
-}
-
-.logoutBtn:hover {
-  background-color: #dc2626;
 }
 
 /* ===========================
@@ -163,11 +154,16 @@ button:hover {
   border: 1px solid #e5e7eb;
   border-radius: 1rem;
   padding: 12px;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 999;
+}
+
+/* Add this new rule */
+.mobileMenu:not(.hidden) {
+  display: flex;
 }
 
 .mobileTabBtn,
@@ -502,16 +498,13 @@ table tbody tr:nth-child(even) {
 .policyBody input {
   padding: 8px;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
 }
 
 .policyBody button {
   margin-top: 10px;
   padding: 10px;
-  background: #2563eb;
   color: white;
   border: none;
-  border-radius: 6px;
 }
 
 /* ===========================

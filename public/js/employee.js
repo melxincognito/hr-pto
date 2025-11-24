@@ -35,16 +35,123 @@ async function loadEmployeePTO() {
   const res = await fetch("/api/employee/summary");
   const data = await res.json();
 
+  // Update PTO Overview
   document.getElementById("totalPto").textContent = data.total_pto_allowed;
   document.getElementById("usedPto").textContent = data.used;
   document.getElementById("remainingPto").textContent = data.remaining;
 
+  // Load PTO History Table
   const table = document.querySelector("#historyTable tbody");
   table.innerHTML = "";
-  data.history.forEach((row) => {
-    table.innerHTML += `<tr><td>${row.date.slice(0, 10)}</td><td>${
-      row.hours_used
-    }</td></tr>`;
+
+  // Check if there's no history
+  if (data.history.length === 0) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="2" style="text-align: center; padding: 20px; color: #64748b;">
+          No PTO has been used yet
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Create a row for each PTO entry
+  data.history.forEach((entry) => {
+    const date = new Date(entry.date);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    // Convert hours to days
+    const days = entry.hours_used / 8;
+    let daysText;
+
+    if (days === 1) {
+      daysText = "1 day";
+    } else if (days === 0.5) {
+      daysText = "Half day";
+    } else if (days % 1 === 0) {
+      // Whole number of days
+      daysText = `${days} days`;
+    } else {
+      // Fractional days (e.g., 1.5 days)
+      daysText = `${days} days`;
+    }
+
+    table.innerHTML += `
+      <tr>
+        <td>${formattedDate}</td>
+        <td>${daysText}</td>
+      </tr>
+    `;
+  });
+}
+
+async function loadPastYearPto() {
+  const res = await fetch("/api/employee/previous-year-history");
+  const data = await res.json();
+
+  const table = document.querySelector("#lastYearPtoHistoryTable tbody");
+  table.innerHTML = " ";
+
+  // Check if employee is in first year
+  if (data.message) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="2" style="text-align: center; padding: 20px; color: #64748b;">
+          ${data.message}
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Check if there's no history
+  if (data.history.length === 0) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="2" style="text-align: center; padding: 20px; color: #64748b;">
+          No PTO was used during ${data.lastWorkYear.startDate} to ${data.lastWorkYear.endDate}
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Create a row for each PTO entry
+  data.history.forEach((entry) => {
+    const row = document.createElement("tr");
+
+    // Format the date nicely
+    const date = new Date(entry.date);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    // Create date cell
+    const dateCell = document.createElement("td");
+    dateCell.textContent = formattedDate;
+
+    // Create hours cell (convert to days if you prefer)
+    const hoursCell = document.createElement("td");
+    const days = entry.hours_used / 8;
+    hoursCell.textContent = days === 1 ? "1 day" : `${days} days`;
+    // Or if you want to show hours:
+    // hoursCell.textContent = `${entry.hours_used} hours`;
+
+    // Append cells to row
+    row.appendChild(dateCell);
+    row.appendChild(hoursCell);
+
+    // Append row to table
+    table.appendChild(row);
   });
 }
 
@@ -126,5 +233,6 @@ function loadHolidays() {
 }
 
 loadEmployeePTO();
+loadPastYearPto();
 loadPolicies();
 loadHolidays();

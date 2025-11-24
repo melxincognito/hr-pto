@@ -190,7 +190,7 @@ async function loadPtoBook() {
     // Add month header row
     tbody.innerHTML += `
       <tr class="monthHeader">
-        <td colspan="3"><strong>${monthYear}</strong></td>
+        <td colspan="4"><strong>${monthYear}</strong></td>
       </tr>
     `;
 
@@ -207,6 +207,7 @@ async function loadPtoBook() {
         <tr>
           <td>${pto.full_name}</td>
           <td>${formattedDate}</td>
+          <td>${pto.hours_used} hours </td>
           <td>
             <button class="deleteBtn" data-id="${pto.id}">X</button>
           </td>

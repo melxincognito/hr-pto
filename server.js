@@ -167,22 +167,20 @@ app.get("/api/admin/summary", async (req, res) => {
       (Date.now() - new Date(emp.start_date)) / (1000 * 60 * 60 * 24 * 365)
     );
 
-    // Find applicable policy based on years of service
     const policy =
       policies.find((p) => years >= p.years_of_service) || policies[0];
 
-    // Use manual override if it exists, otherwise policy days
     let total_allowed = emp.total_pto_allowed ?? policy.days_allowed;
 
-    // PTO used (current year)
+    // PTO used - SUM hours and convert to days
     const [usedRows] = await db.query(
-      "SELECT COUNT(*) AS used FROM pto WHERE user_id = ?",
+      "SELECT COALESCE(SUM(hours_used), 0) AS hours_used FROM pto WHERE user_id = ?",
       [emp.id]
     );
 
-    const used = usedRows[0].used;
-
-    const remaining = Math.max(total_allowed - used, 0);
+    const totalHoursUsed = usedRows[0].hours_used;
+    const used = totalHoursUsed / 8; // Convert hours to days (8 hours = 1 day)
+    const remaining = total_allowed - used;
 
     summary.push({
       full_name: emp.full_name,
@@ -198,7 +196,7 @@ app.get("/api/admin/summary", async (req, res) => {
 // Upcoming PTO
 app.get("/api/admin/upcoming", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
-    "SELECT u.full_name, p.date, p.id FROM pto p JOIN users u ON p.user_id = u.id WHERE YEAR(p.date) = YEAR(CURDATE()) ORDER BY p.date ASC"
+    "SELECT u.full_name, p.date, p.id, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id WHERE YEAR(p.date) = YEAR(CURDATE()) ORDER BY p.date ASC"
   );
 
   res.json(rows);
@@ -246,13 +244,14 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
   );
   const user = userRows[0];
   const total_pto_allowed = user.total_pto_allowed;
+
   const [usedRows] = await db.query(
-    "SELECT COUNT(*) AS used FROM pto WHERE user_id = ?",
+    "SELECT COALESCE(SUM(hours_used), 0) AS hours_used FROM pto WHERE user_id = ?",
     [userId]
   );
 
-  const used = usedRows[0].used;
-
+  const totalHoursUsed = usedRows[0].hours_used;
+  const used = totalHoursUsed / 8; // Convert hours to days (8 hours = 1 day)
   const remaining = total_pto_allowed - used;
 
   // PTO history
@@ -261,7 +260,12 @@ app.get("/api/employee/summary", ensureAuth, async (req, res) => {
     [userId]
   );
 
-  res.json({ used, remaining, history, total_pto_allowed });
+  res.json({
+    used,
+    remaining,
+    history,
+    total_pto_allowed,
+  });
 });
 
 // Change Password (Employee Only)
@@ -290,6 +294,90 @@ app.put("/api/employee/change-password", ensureAuth, async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get Previous Work Year PTO History
+app.get("/api/employee/previous-year-history", ensureAuth, async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+    // Get user's start date
+    const [userRows] = await db.query(
+      "SELECT start_date FROM users WHERE id = ?",
+      [userId]
+    );
+
+    if (!userRows.length) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const startDate = new Date(userRows[0].start_date);
+    const today = new Date();
+
+    // Calculate years of service
+    let yearsOfService = today.getFullYear() - startDate.getFullYear();
+
+    // Adjust if anniversary hasn't occurred yet this year
+    if (
+      today.getMonth() < startDate.getMonth() ||
+      (today.getMonth() === startDate.getMonth() &&
+        today.getDate() < startDate.getDate())
+    ) {
+      yearsOfService--;
+    }
+
+    // If employee is in their first year, no previous history exists
+    if (yearsOfService < 1) {
+      return res.json({
+        lastWorkYear: null,
+        totalDaysUsed: 0,
+        history: [],
+        message: "Employee is in their first work year",
+      });
+    }
+
+    // Calculate last anniversary date (start of last work year)
+    const lastAnniversary = new Date(startDate);
+    lastAnniversary.setFullYear(startDate.getFullYear() + (yearsOfService - 1));
+
+    // Calculate most recent anniversary date (end of last work year)
+    const recentAnniversary = new Date(startDate);
+    recentAnniversary.setFullYear(startDate.getFullYear() + yearsOfService);
+
+    // Query pto_history for dates between last two anniversaries
+    const [history] = await db.query(
+      `SELECT date, hours_used, created_at 
+       FROM pto_history 
+       WHERE user_id = ? 
+       AND date >= ? 
+       AND date < ? 
+       ORDER BY date DESC`,
+      [
+        userId,
+        lastAnniversary.toISOString().split("T")[0],
+        recentAnniversary.toISOString().split("T")[0],
+      ]
+    );
+
+    // Calculate total days used in that period (assuming 8 hours = 1 day)
+    const totalDaysUsed = history.reduce(
+      (sum, entry) => sum + entry.hours_used / 8,
+      0
+    );
+
+    res.json({
+      lastWorkYear: {
+        startDate: lastAnniversary.toISOString().split("T")[0],
+        endDate: recentAnniversary.toISOString().split("T")[0],
+      },
+      totalDaysUsed: totalDaysUsed,
+      entryCount: history.length,
+      history: history,
+    });
+  } catch (err) {
+    console.error("Error fetching previous year history:", err);
     res.status(500).json({ error: "Server error" });
   }
 });

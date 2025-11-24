@@ -142,7 +142,7 @@ async function loadPastYearPto() {
     // Create hours cell (convert to days if you prefer)
     const hoursCell = document.createElement("td");
     const days = entry.hours_used / 8;
-    hoursCell.textContent = days === 1 ? "1 day" : `${days} days`;
+    hoursCell.textContent = days === 1 ? "1 day" : `Half day`;
     // Or if you want to show hours:
     // hoursCell.textContent = `${entry.hours_used} hours`;
 

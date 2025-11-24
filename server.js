@@ -405,8 +405,7 @@ async function updateCarryOvers() {
       (today - start) / (1000 * 60 * 60 * 24 * 365)
     );
 
-    //  1. Calculate if there is a carry over
-
+    // 1. Calculate if there is a carry over
     let carryOver = 0;
 
     // Only allow once per year
@@ -415,15 +414,16 @@ async function updateCarryOvers() {
         "SELECT total_pto_allowed FROM users WHERE id = ?",
         [user.id]
       );
-      // PTO used last year
+
+      // PTO used last year - SUM hours and convert to days
       const [ptoUsed] = await db.query(
-        "SELECT COUNT(*) AS used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
-        [user.id, currentYear /*- 1 commented out to see what happens */]
+        "SELECT COALESCE(SUM(hours_used), 0) AS hours_used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
+        [user.id, currentYear]
       );
 
       const currentPto = currentPtoAllowed[0].total_pto_allowed;
-      const usedLastYear = ptoUsed[0].used;
-
+      const totalHoursUsed = ptoUsed[0].hours_used; // DECLARE IT HERE
+      const usedLastYear = ptoUsed[0].hours_used / 8; // Convert hours to days
       const unused = currentPto - usedLastYear;
 
       if (unused > 0) {
@@ -431,8 +431,7 @@ async function updateCarryOvers() {
       }
     }
 
-    //   2. GET POLICY TIER
-
+    // 2. GET POLICY TIER
     const [policies] = await db.query(
       "SELECT * FROM policy ORDER BY years_of_service ASC"
     );
@@ -447,7 +446,6 @@ async function updateCarryOvers() {
     }
 
     // 3. UPDATE USER ALLOWED PTO
-
     // Only update PTO tier once per year
     const shouldUpdatePolicy = user.last_policy_update_year !== currentYear;
 
@@ -463,7 +461,6 @@ async function updateCarryOvers() {
         [newTotalAllowed, currentYear, currentYear, user.id]
       );
 
-      // MOVE OLD PTO INTO HISTORY
       await db.query(
         `INSERT INTO pto_history (user_id, date, hours_used, created_at)
           SELECT user_id, date, hours_used, created_at
@@ -472,7 +469,6 @@ async function updateCarryOvers() {
         [user.id]
       );
 
-      // DELETE OLD PTO FROM MAIN TABLE
       await db.query(
         `DELETE FROM pto
           WHERE user_id = ?`,

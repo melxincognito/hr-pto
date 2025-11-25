@@ -122,7 +122,6 @@ async function loadPastYearPto() {
     return;
   }
 
-  // Create a row for each PTO entry
   data.history.forEach((entry) => {
     const row = document.createElement("tr");
 
@@ -135,25 +134,19 @@ async function loadPastYearPto() {
       year: "numeric",
     });
 
-    // Create date cell
     const dateCell = document.createElement("td");
     dateCell.textContent = formattedDate;
 
-    // Create hours cell (convert to days if you prefer)
     const hoursCell = document.createElement("td");
     const days = entry.hours_used / 8;
     hoursCell.textContent = days === 1 ? "1 day" : `Half day`;
-    // Or if you want to show hours:
-    // hoursCell.textContent = `${entry.hours_used} hours`;
 
-    // Append cells to row
     row.appendChild(dateCell);
     row.appendChild(hoursCell);
 
-    // Append row to table
     table.appendChild(row);
   });
-
+  //
   const carryOverCell = document.createElement("tr");
   const carryOverLabel = document.createElement("td");
 

@@ -126,8 +126,9 @@ async function loadPastYearPto() {
   data.history.forEach((entry) => {
     const row = document.createElement("tr");
 
-    // Format the date nicely
-    const date = new Date(entry.date);
+    const dateParts = entry.date.split("T")[0].split("-");
+    const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
     const formattedDate = date.toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",

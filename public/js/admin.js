@@ -173,7 +173,9 @@ async function loadPtoBook() {
   const groupedByMonth = {};
 
   data.forEach((pto) => {
-    const date = new Date(pto.date);
+    const dateParts = pto.date.split("T")[0].split("-");
+    const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
     const monthYear = date.toLocaleString("en-US", {
       month: "long",
       year: "numeric",
@@ -196,7 +198,9 @@ async function loadPtoBook() {
 
     // Add PTO entries for this month
     groupedByMonth[monthYear].forEach((pto) => {
-      const date = new Date(pto.date);
+      const dateParts = pto.date.split("T")[0].split("-");
+      const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
       const formattedDate = date.toLocaleDateString("en-US", {
         weekday: "short",
         month: "short",

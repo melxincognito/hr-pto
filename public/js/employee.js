@@ -153,6 +153,19 @@ async function loadPastYearPto() {
     // Append row to table
     table.appendChild(row);
   });
+
+  const carryOverCell = document.createElement("tr");
+  const carryOverLabel = document.createElement("td");
+
+  const carryOverDays = document.createElement("td");
+
+  carryOverLabel.innerHTML = `<b>Days Carried Over:</b>`;
+  carryOverDays.innerHTML = `<b>${data.carryOverTotal[0].carried_over} days</b>`;
+
+  carryOverCell.appendChild(carryOverLabel);
+  carryOverCell.appendChild(carryOverDays);
+
+  table.appendChild(carryOverCell);
 }
 
 async function loadPolicies() {

@@ -366,6 +366,10 @@ app.get("/api/employee/previous-year-history", ensureAuth, async (req, res) => {
       (sum, entry) => sum + entry.hours_used / 8,
       0
     );
+    const [carryOver] = await db.query(
+      `SELECT carried_over FROM users WHERE id = ?`,
+      [userId]
+    );
 
     res.json({
       lastWorkYear: {
@@ -375,6 +379,7 @@ app.get("/api/employee/previous-year-history", ensureAuth, async (req, res) => {
       totalDaysUsed: totalDaysUsed,
       entryCount: history.length,
       history: history,
+      carryOverTotal: carryOver,
     });
   } catch (err) {
     console.error("Error fetching previous year history:", err);
@@ -422,7 +427,6 @@ async function updateCarryOvers() {
       );
 
       const currentPto = currentPtoAllowed[0].total_pto_allowed;
-      const totalHoursUsed = ptoUsed[0].hours_used; // DECLARE IT HERE
       const usedLastYear = ptoUsed[0].hours_used / 8; // Convert hours to days
       const unused = currentPto - usedLastYear;
 
@@ -456,9 +460,11 @@ async function updateCarryOvers() {
         `UPDATE users 
          SET total_pto_allowed = ?,
              last_carry_year = ?, 
-             last_policy_update_year = ?
+             last_policy_update_year = ?, 
+             carried_over = ?
+
          WHERE id = ?`,
-        [newTotalAllowed, currentYear, currentYear, user.id]
+        [newTotalAllowed, currentYear, currentYear, carryOver, user.id]
       );
 
       await db.query(

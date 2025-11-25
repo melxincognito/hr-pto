@@ -490,8 +490,9 @@ table tbody tr:nth-child(even) {
 }
 
 .arrowEmployee {
-  right: 3%;
+  right: 7%;
   position: absolute;
+  margin-top: 5px;
 }
 
 .policyBody {

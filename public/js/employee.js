@@ -70,16 +70,15 @@ async function loadEmployeePTO() {
     const days = entry.hours_used / 8;
     let daysText;
 
-    if (days === 1) {
-      daysText = "1 day";
-    } else if (days === 0.5) {
-      daysText = "Half day";
-    } else if (days % 1 === 0) {
-      // Whole number of days
-      daysText = `${days} days`;
-    } else {
-      // Fractional days (e.g., 1.5 days)
-      daysText = `${days} days`;
+    switch (days) {
+      case 0:
+        daysText = "Not counted towards PTO";
+        break;
+      case 1:
+        daysText = "1 day";
+        break;
+      default:
+        daysText = "Half day";
     }
 
     table.innerHTML += `
@@ -139,7 +138,19 @@ async function loadPastYearPto() {
 
     const hoursCell = document.createElement("td");
     const days = entry.hours_used / 8;
-    hoursCell.textContent = days === 1 ? "1 day" : `Half day`;
+    let daysText;
+
+    switch (days) {
+      case 0:
+        daysText = "Not counted towards PTO";
+        break;
+      case 1:
+        daysText = "1 day";
+        break;
+      default:
+        daysText = "Half day";
+    }
+    hoursCell.textContent = daysText;
 
     row.appendChild(dateCell);
     row.appendChild(hoursCell);

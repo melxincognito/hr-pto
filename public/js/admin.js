@@ -161,6 +161,83 @@ async function loadSummary() {
   });
 }
 
+async function loadPtoBook() {
+  const res = await fetch("/api/admin/upcoming");
+  const data = await res.json();
+  const tbody = document.querySelector("#upcomingTable tbody");
+  tbody.innerHTML = "";
+
+  // Group PTO entries by month
+  const groupedByMonth = {};
+  const monthOrder = []; // Track the order of months
+
+  data.forEach((pto) => {
+    const dateParts = pto.date.split("T")[0].split("-");
+    const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+    const monthYear = date.toLocaleString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+
+    if (!groupedByMonth[monthYear]) {
+      groupedByMonth[monthYear] = [];
+      monthOrder.push(monthYear); // Keep track of month order
+    }
+    groupedByMonth[monthYear].push(pto);
+  });
+
+  // Render each month group in the order they appear (already newest first)
+  monthOrder.forEach((monthYear) => {
+    // Add month header row
+    tbody.innerHTML += `
+      <tr class="monthHeader">
+        <td colspan="4"><strong>${monthYear}</strong></td>
+      </tr>
+    `;
+
+    // Add PTO entries for this month
+    groupedByMonth[monthYear].forEach((pto) => {
+      const dateParts = pto.date.split("T")[0].split("-");
+      const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${pto.full_name}</td>
+          <td>${formattedDate}</td>
+          <td>${pto.hours_used} hours</td>
+          <td>
+            <button class="deleteBtn" data-id="${pto.id}">X</button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+
+  // Attach delete event listeners
+  document.querySelectorAll(".deleteBtn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (confirm("Are you sure you want to delete this PTO entry?")) {
+        const res = await fetch(`/api/admin/pto/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          alert("PTO entry deleted!");
+          await loadPtoBook();
+          await loadSummary();
+        } else {
+          alert("Error deleting PTO entry.");
+        }
+      }
+    });
+  });
+}
+/*
 // Load PTO Book, this is the PTO history for just the year - Grouped by Month
 async function loadPtoBook() {
   const res = await fetch("/api/admin/upcoming");
@@ -239,45 +316,7 @@ async function loadPtoBook() {
     });
   });
 }
-/*
-// Load Upcoming PTO
-async function loadUpcoming() {
-  const res = await fetch("/api/admin/upcoming");
-  const data = await res.json();
-  
-
-  const tbody = document.querySelector("#upcomingTable tbody");
-  tbody.innerHTML = "";
-  data.forEach((pto) => {
-    tbody.innerHTML += `<tr><td>${pto.full_name}</td><td>${pto.date.slice(
-      0,
-      10
-    )}</td>
-      <td>
-        <button class="deleteBtn" data-id="${pto.id}">X</button>
-      </td>
-    </tr>`;
-  });
-
-  document.querySelectorAll(".deleteBtn").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
-      const id = e.target.dataset.id;
-      if (confirm("Are you sure you want to delete this PTO entry?")) {
-        const res = await fetch(`/api/admin/pto/${id}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          alert("PTO entry deleted!");
-          await loadUpcoming();
-          await loadSummary();
-        } else {
-          alert("Error deleting PTO entry.");
-        }
-      }
-    });
-  });
-}
-*/
+ */
 // PTO Past Years History
 async function loadPastPtoHistory() {
   const res = await fetch("/api/admin/pastptohistory");

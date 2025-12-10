@@ -196,9 +196,8 @@ app.get("/api/admin/summary", async (req, res) => {
 // Upcoming PTO
 app.get("/api/admin/upcoming", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
-    "SELECT u.full_name, p.date, p.id, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id WHERE YEAR(p.date) = YEAR(CURDATE()) ORDER BY p.date ASC"
+    "SELECT u.full_name, p.date, p.id, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date DESC"
   );
-
   res.json(rows);
 });
 

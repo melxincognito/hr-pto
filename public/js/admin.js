@@ -160,7 +160,6 @@ async function loadSummary() {
     });
   });
 }
-
 async function loadPtoBook() {
   const res = await fetch("/api/admin/upcoming");
   const data = await res.json();
@@ -204,17 +203,67 @@ async function loadPtoBook() {
         month: "short",
         day: "numeric",
       });
+      const isoDate = pto.date.split("T")[0]; // YYYY-MM-DD format for input
 
       tbody.innerHTML += `
-        <tr>
+        <tr data-id="${pto.id}">
           <td>${pto.full_name}</td>
-          <td>${formattedDate}</td>
-          <td>${pto.hours_used} hours</td>
-          <td>
-            <button class="deleteBtn" data-id="${pto.id}">X</button>
+          <td class="dateCell">
+            <span class="dateDisplay">${formattedDate}</span>
+            <input type="date" class="dateInput hidden" value="${isoDate}" />
+          </td>
+          <td class="hoursCell">
+            <span class="hoursDisplay">${pto.hours_used} hours</span>
+            <input type="number" class="hoursInput hidden" value="${pto.hours_used}" min="0" step="0.5" />
+          </td>
+          <td class="actions">
+            <button class="editBtn" data-id="${pto.id}">Edit</button>
+            <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
+            <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
+            <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
           </td>
         </tr>
       `;
+    });
+  });
+
+  // Attach edit event listeners
+  document.querySelectorAll(".editBtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const row = e.target.closest("tr");
+      enterEditMode(row);
+    });
+  });
+
+  // Attach save event listeners
+  document.querySelectorAll(".saveBtn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      const row = e.target.closest("tr");
+      const newDate = row.querySelector(".dateInput").value;
+      const newHours = row.querySelector(".hoursInput").value;
+
+      const res = await fetch(`/api/admin/pto/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: newDate, hours_used: newHours }),
+      });
+
+      if (res.ok) {
+        alert("PTO entry updated!");
+        await loadPtoBook();
+        await loadSummary();
+      } else {
+        alert("Error updating PTO entry.");
+      }
+    });
+  });
+
+  // Attach cancel event listeners
+  document.querySelectorAll(".cancelBtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const row = e.target.closest("tr");
+      exitEditMode(row);
     });
   });
 
@@ -236,6 +285,34 @@ async function loadPtoBook() {
       }
     });
   });
+}
+
+function enterEditMode(row) {
+  // Hide display elements and show input fields
+  row.querySelector(".dateDisplay").classList.add("hidden");
+  row.querySelector(".dateInput").classList.remove("hidden");
+  row.querySelector(".hoursDisplay").classList.add("hidden");
+  row.querySelector(".hoursInput").classList.remove("hidden");
+
+  // Toggle buttons
+  row.querySelector(".editBtn").classList.add("hidden");
+  row.querySelector(".saveBtn").classList.remove("hidden");
+  row.querySelector(".cancelBtn").classList.remove("hidden");
+  row.querySelector(".deleteBtn").classList.remove("hidden");
+}
+
+function exitEditMode(row) {
+  // Show display elements and hide input fields
+  row.querySelector(".dateDisplay").classList.remove("hidden");
+  row.querySelector(".dateInput").classList.add("hidden");
+  row.querySelector(".hoursDisplay").classList.remove("hidden");
+  row.querySelector(".hoursInput").classList.add("hidden");
+
+  // Toggle buttons
+  row.querySelector(".editBtn").classList.remove("hidden");
+  row.querySelector(".saveBtn").classList.add("hidden");
+  row.querySelector(".cancelBtn").classList.add("hidden");
+  row.querySelector(".deleteBtn").classList.add("hidden");
 }
 /*
 // Load PTO Book, this is the PTO history for just the year - Grouped by Month

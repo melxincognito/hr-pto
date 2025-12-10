@@ -193,12 +193,28 @@ app.get("/api/admin/summary", async (req, res) => {
   res.json(summary);
 });
 
-// Upcoming PTO
+// Upcoming PTO - PTO Book API
 app.get("/api/admin/upcoming", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
     "SELECT u.full_name, p.date, p.id, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date DESC"
   );
   res.json(rows);
+});
+// Edit PTO Entry API from PTO Book Page
+app.put("/api/admin/pto/:id", ensureAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { date, hours_used } = req.body;
+
+  try {
+    await db.query("UPDATE pto SET date = ?, hours_used = ? WHERE id = ?", [
+      date,
+      hours_used,
+      id,
+    ]);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update PTO entry" });
+  }
 });
 
 // Past Pto History PTO

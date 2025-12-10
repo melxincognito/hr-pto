@@ -592,6 +592,9 @@ li + li {
    RESPONSIVE (MOBILE)
    =========================== */
 @media (max-width: 600px) {
+  body {
+    overflow-x: hidden;
+  }
   /* Login */
   .loginContainer img {
     height: 80%;

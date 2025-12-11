@@ -265,7 +265,7 @@ app.put("/api/admin/pto/:id", ensureAdmin, async (req, res) => {
 // Past Pto History PTO
 app.get("/api/admin/pastptohistory", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
-    "SELECT u.full_name, p.date, p.id FROM pto_history p JOIN users u ON p.user_id = u.id"
+    "SELECT u.full_name, u.start_date, p.date, p.hours_used, p.id FROM pto_history p JOIN users u ON p.user_id = u.id ORDER BY u.full_name ASC, p.date DESC"
   );
   res.json(rows);
 });
@@ -294,7 +294,6 @@ app.delete("/api/admin/pto/:id", async (req, res) => {
   }
 });
 
-// Employee summary route
 // Employee summary route
 app.get("/api/employee/summary", ensureAuth, async (req, res) => {
   const userId = req.session.user.id;

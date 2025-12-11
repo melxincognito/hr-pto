@@ -507,28 +507,117 @@ async function loadPastPtoHistory() {
   const container = document.getElementById("pastPtoContainer");
   container.innerHTML = "";
 
+  // Group by employee name
   const grouped = {};
   data.forEach((entry) => {
-    if (!grouped[entry.full_name]) grouped[entry.full_name] = [];
-    grouped[entry.full_name].push(entry);
+    if (!grouped[entry.full_name]) {
+      grouped[entry.full_name] = {
+        start_date: entry.start_date,
+        entries: [],
+      };
+    }
+    grouped[entry.full_name].entries.push(entry);
   });
 
   Object.keys(grouped).forEach((name) => {
+    const employeeData = grouped[name];
+    const startDate = new Date(employeeData.start_date);
+
+    // Group entries by work year
+    const yearGroups = {};
+
+    employeeData.entries.forEach((pto) => {
+      const ptoDate = new Date(pto.date);
+
+      // Calculate which work year this PTO falls into
+      let yearsSinceStart = ptoDate.getFullYear() - startDate.getFullYear();
+
+      // Adjust if the PTO date is before the anniversary month
+      if (
+        ptoDate.getMonth() < startDate.getMonth() ||
+        (ptoDate.getMonth() === startDate.getMonth() &&
+          ptoDate.getDate() < startDate.getDate())
+      ) {
+        yearsSinceStart--;
+      }
+
+      const workYear = yearsSinceStart + 1; // Work year starts at 1
+
+      if (!yearGroups[workYear]) {
+        yearGroups[workYear] = [];
+      }
+      yearGroups[workYear].push(pto);
+    });
+
+    // Build accordion section
     const section = document.createElement("div");
     section.classList.add("accordionItem");
+
+    let bodyContent = "";
+
+    // Sort work years in descending order (most recent first)
+    const sortedYears = Object.keys(yearGroups).sort((a, b) => b - a);
+
+    sortedYears.forEach((workYear) => {
+      const entries = yearGroups[workYear];
+
+      // DEBUG: Log entries for this work year
+
+      const totalHours = entries.reduce((sum, entry) => {
+        const hours = Number(entry.hours_used) || 0;
+        return sum + hours;
+      }, 0);
+
+      const totalDays = totalHours / 8;
+
+      bodyContent += `
+        <div class="workYearSection">
+          <h4>Year ${workYear} - ${totalDays} day${
+        totalDays !== 1 ? "s" : ""
+      } taken</h4>
+          <div class="ptoEntries">
+            ${entries
+              .map((pto) => {
+                const dateParts = pto.date.split("T")[0].split("-");
+                const date = new Date(
+                  dateParts[0],
+                  dateParts[1] - 1,
+                  dateParts[2]
+                );
+                const formattedDate = date.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                });
+                const hours = Number(pto.hours_used) || 0;
+                const days = hours / 8;
+                return `
+                <div class="historyRow">
+                  <span class="historyDate">${formattedDate}</span> - 
+                  <span class="historyHours">${hours} hours - (${days} day${
+                  days !== 1 ? "s" : ""
+                })</span>
+                </div>
+              `;
+              })
+              .join("")}
+          </div>
+        </div>
+      `;
+    });
 
     section.innerHTML = `
       <button class="accordionHeader">${name}</button>
       <div class="accordionBody hidden">
-        ${grouped[name]
-          .map((pto) => `<p class="historyRow">${pto.date.slice(0, 10)}</p>`)
-          .join("")}
+        ${bodyContent}
       </div>
     `;
 
     container.appendChild(section);
   });
 
+  // Attach accordion toggle listeners
   document.querySelectorAll(".accordionHeader").forEach((btn) => {
     btn.addEventListener("click", () => {
       const body = btn.nextElementSibling;

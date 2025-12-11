@@ -110,12 +110,49 @@ app.listen(PORT, () =>
 );
 
 // ADMIN ROUTES
+// Get all employees
 app.get("/api/admin/employees", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
-    "SELECT id, full_name, username, start_date FROM users WHERE role='employee' ORDER BY full_name ASC"
+    "SELECT id, full_name, username, start_date, role, inactive FROM users WHERE role IN ('employee', 'admin') ORDER BY full_name ASC"
   );
   res.json(rows);
 });
+
+// Update employee
+app.put("/api/admin/employees/:id", ensureAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { full_name, username, role, inactive } = req.body;
+
+  try {
+    await db.query(
+      "UPDATE users SET full_name = ?, username = ?, role = ?, inactive = ? WHERE id = ?",
+      [full_name, username, role, inactive, id]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update employee" });
+  }
+});
+
+// Reset employee password from admin
+app.put(
+  "/api/admin/employees/:id/reset-password",
+  ensureAdmin,
+  async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const hashedPassword = await bcrypt.hash("schoolsplp", 10);
+      await db.query("UPDATE users SET password = ? WHERE id = ?", [
+        hashedPassword,
+        id,
+      ]);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to reset password" });
+    }
+  }
+);
 
 app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
   const { full_name, username, password, start_date } = req.body;

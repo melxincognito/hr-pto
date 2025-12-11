@@ -39,25 +39,195 @@ document.getElementById("logoutMobile").addEventListener("click", async () => {
   window.sessionStorage.clear();
   window.location.href = "/login.html";
 });
-
 // Fetch Employees
 async function loadEmployees() {
   const res = await fetch("/api/admin/employees");
   const data = await res.json();
-
   const tbody = document.querySelector("#employeeTable tbody");
   const select = document.getElementById("ptoUser");
   tbody.innerHTML = "";
   select.innerHTML = "";
 
   data.forEach((emp) => {
-    tbody.innerHTML += `<tr><td>${emp.full_name}</td><td>${
-      emp.username
-    }</td><td>${emp.start_date.slice(0, 10)}</td></tr>`;
+    // Format date nicely
+    const dateParts = emp.start_date.split("T")[0].split("-");
+    const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    tbody.innerHTML += `
+      <tr data-id="${emp.id}" data-role="${emp.role}" data-inactive="${emp.inactive}">
+        <td class="nameCell">
+          <span class="nameDisplay">${emp.full_name}</span>
+          <input type="text" class="nameInput hidden" value="${emp.full_name}" />
+        </td>
+        <td class="usernameCell">
+          <span class="usernameDisplay">${emp.username}</span>
+          <input type="text" class="usernameInput hidden" value="${emp.username}" />
+        </td>
+        <td>${formattedDate}</td>
+        <td class="actions">
+          <button class="editEmployeeBtn" data-id="${emp.id}">Edit</button>
+          <button class="saveEmployeeBtn hidden" data-id="${emp.id}">Save</button>
+          <button class="resetPasswordBtn hidden" data-id="${emp.id}">Reset Password</button> 
+          <button class="cancelEmployeeBtn hidden" data-id="${emp.id}">Cancel</button>
+        </td>
+      </tr>
+    `;
+
     select.innerHTML += `<option value="${emp.id}">${emp.full_name}</option>`;
+  });
+
+  // Attach edit event listeners
+  document.querySelectorAll(".editEmployeeBtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const row = e.target.closest("tr");
+      enterEmployeeEditMode(row);
+    });
+  });
+
+  // Attach save event listeners
+  document.querySelectorAll(".saveEmployeeBtn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      const row = e.target.closest("tr");
+      const fullName = row.querySelector(".nameInput").value;
+      const username = row.querySelector(".usernameInput").value;
+      const isAdmin = row.querySelector(".adminCheckbox").checked;
+      const isInactive = row.querySelector(".inactiveCheckbox").checked;
+
+      const res = await fetch(`/api/admin/employees/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: fullName,
+          username: username,
+          role: isAdmin ? "admin" : "employee",
+          inactive: isInactive,
+        }),
+      });
+
+      if (res.ok) {
+        alert("Employee updated successfully!");
+        await loadEmployees();
+      } else {
+        alert("Error updating employee.");
+      }
+    });
+  });
+
+  // Attach cancel event listeners
+  document.querySelectorAll(".cancelEmployeeBtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const row = e.target.closest("tr");
+      exitEmployeeEditMode(row);
+    });
+  });
+
+  // Attach reset password event listeners
+  document.querySelectorAll(".resetPasswordBtn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (
+        confirm(
+          "Are you sure you want to reset this employee's password to 'schoolsplp'?"
+        )
+      ) {
+        const res = await fetch(`/api/admin/employees/${id}/reset-password`, {
+          method: "PUT",
+        });
+
+        if (res.ok) {
+          alert("Password reset successfully!");
+        } else {
+          alert("Error resetting password.");
+        }
+      }
+    });
   });
 }
 
+function enterEmployeeEditMode(row) {
+  const role = row.dataset.role;
+  const inactive = row.dataset.inactive === "true";
+
+  // Hide display elements and show input fields
+  row.querySelector(".nameDisplay").classList.add("hidden");
+  row.querySelector(".nameInput").classList.remove("hidden");
+  row.querySelector(".usernameDisplay").classList.add("hidden");
+  row.querySelector(".usernameInput").classList.remove("hidden");
+
+  // Insert checkbox columns before actions column
+  const actionsCell = row.querySelector(".actions");
+
+  // Admin checkbox cell
+  const adminCell = document.createElement("td");
+  adminCell.className = "checkboxCell";
+  adminCell.innerHTML = `
+    <label class="checkboxLabel">
+      <input type="checkbox" class="adminCheckbox" ${
+        role === "admin" ? "checked" : ""
+      } />
+      <span>Admin</span>
+    </label>
+  `;
+  actionsCell.parentNode.insertBefore(adminCell, actionsCell);
+
+  // Inactive checkbox cell
+  const inactiveCell = document.createElement("td");
+  inactiveCell.className = "checkboxCell";
+  inactiveCell.innerHTML = `
+    <label class="checkboxLabel">
+      <input type="checkbox" class="inactiveCheckbox" ${
+        inactive ? "checked" : ""
+      } />
+      <span>Inactive</span>
+    </label>
+  `;
+  actionsCell.parentNode.insertBefore(inactiveCell, actionsCell);
+
+  // Show header columns
+  document.querySelectorAll(".editModeColumn").forEach((col) => {
+    col.classList.remove("hidden");
+  });
+
+  // Toggle buttons
+  row.querySelector(".editEmployeeBtn").classList.add("hidden");
+  row.querySelector(".saveEmployeeBtn").classList.remove("hidden");
+  row.querySelector(".cancelEmployeeBtn").classList.remove("hidden");
+  row.querySelector(".resetPasswordBtn").classList.remove("hidden");
+}
+
+function exitEmployeeEditMode(row) {
+  // Show display elements and hide input fields
+  row.querySelector(".nameDisplay").classList.remove("hidden");
+  row.querySelector(".nameInput").classList.add("hidden");
+  row.querySelector(".usernameDisplay").classList.remove("hidden");
+  row.querySelector(".usernameInput").classList.add("hidden");
+
+  // Remove checkbox cells
+  row.querySelectorAll(".checkboxCell").forEach((cell) => {
+    cell.remove();
+  });
+
+  // Hide header columns
+  document.querySelectorAll(".editModeColumn").forEach((col) => {
+    col.classList.add("hidden");
+  });
+
+  // Toggle buttons
+  row.querySelector(".editEmployeeBtn").classList.remove("hidden");
+  row.querySelector(".saveEmployeeBtn").classList.add("hidden");
+  row.querySelector(".cancelEmployeeBtn").classList.add("hidden");
+  row.querySelector(".resetPasswordBtn").classList.add("hidden");
+
+  // Reload to reset values
+  loadEmployees();
+}
 // Add Employee
 document
   .getElementById("addEmployeeForm")

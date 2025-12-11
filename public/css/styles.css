@@ -255,7 +255,9 @@ table tbody tr:hover {
 table tbody tr:nth-child(even) {
   background-color: #ededed;
 }
+
 /* admin pto summary section */
+
 #ptoSummaryHeadingTr {
   position: sticky;
   top: 0;
@@ -319,6 +321,76 @@ table tbody tr:nth-child(even) {
 #remainingPto {
   background-color: #dcfce7;
   color: #166534;
+}
+/*admin.html Add employee page styling for employee list to edit and such */
+
+/* Style for edit-mode-only columns */
+
+.nameCell,
+.usernameCell {
+  min-width: 150px;
+}
+
+.nameInput,
+.usernameInput {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 90%;
+}
+
+.checkboxCell {
+  text-align: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.editEmployeeBtn,
+.saveEmployeeBtn,
+.cancelEmployeeBtn,
+.resetPasswordBtn {
+  padding: 6px 12px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.editEmployeeBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.saveEmployeeBtn {
+  background-color: #2196f3;
+  color: white;
+}
+
+.cancelEmployeeBtn {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.resetPasswordBtn {
+  background-color: #ff9800;
+  color: white;
+}
+
+.editEmployeeBtn:hover,
+.saveEmployeeBtn:hover,
+.cancelEmployeeBtn:hover,
+.resetPasswordBtn:hover {
+  opacity: 0.8;
 }
 
 /* admin.html pto book section */

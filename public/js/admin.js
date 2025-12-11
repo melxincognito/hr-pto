@@ -153,7 +153,7 @@ async function loadEmployees() {
 
 function enterEmployeeEditMode(row) {
   const role = row.dataset.role;
-  const inactive = row.dataset.inactive === "true";
+  const inactive = row.dataset.inactive === "1";
 
   // Hide display elements and show input fields
   row.querySelector(".nameDisplay").classList.add("hidden");

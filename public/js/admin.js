@@ -321,18 +321,18 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
     user_id: document.getElementById("ptoUser").value,
     date: document.getElementById("ptoDate").value,
     hours_used: document.getElementById("ptoHours").value,
+    notes: document.getElementById("ptoNotes").value.trim() || null,
   };
-
   const res = await fetch("/api/admin/pto", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-
   if (res.ok) {
     alert("PTO entry added!");
     document.getElementById("ptoDate").value = "";
     document.getElementById("ptoHours").value = 8;
+    document.getElementById("ptoNotes").value = "";
     await loadSummary();
     await loadPtoBook();
   } else {
@@ -340,50 +340,6 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
   }
 });
 
-// Load Summary
-async function loadSummary() {
-  const res = await fetch("/api/admin/summary");
-  const data = await res.json();
-
-  // Desktop Layout
-  const tbody = document.querySelector("#summaryTable tbody");
-  tbody.innerHTML = "";
-  data.forEach((row) => {
-    tbody.innerHTML += `<tr><td>${row.full_name}</td><td>${row.total_allowed}</td><td>${row.used}</td><td>${row.remaining}</td></tr>`;
-  });
-
-  // MOBILE CARDS
-  const mobileContainer = document.querySelector("#summaryMobileContainer");
-  mobileContainer.innerHTML = "";
-
-  data.forEach((row) => {
-    mobileContainer.innerHTML += `
-      <div class="summaryCard">
-        <button class="summaryHeader">
-          <span>${row.full_name}</span>
-          <span class="arrow">▼</span>
-        </button>
-
-        <div class="summaryBody">
-          <div><strong>Total Allowed:</strong> ${row.total_allowed}</div>
-          <div><strong>Used:</strong> ${row.used}</div>
-          <div><strong>Remaining:</strong> ${row.remaining}</div>
-        </div>
-      </div>
-    `;
-  });
-
-  // Enable expand/collapse
-  document.querySelectorAll(".summaryHeader").forEach((header) => {
-    header.addEventListener("click", () => {
-      const body = header.nextElementSibling;
-      const arrow = header.querySelector(".arrow");
-
-      body.classList.toggle("open");
-      arrow.classList.toggle("rotated");
-    });
-  });
-}
 async function loadPtoBook() {
   const res = await fetch("/api/admin/upcoming");
   const data = await res.json();
@@ -414,7 +370,7 @@ async function loadPtoBook() {
     // Add month header row
     tbody.innerHTML += `
       <tr class="monthHeader">
-        <td colspan="4"><strong>${monthYear}</strong></td>
+        <td colspan="5"><strong>${monthYear}</strong></td>
       </tr>
     `;
 
@@ -428,26 +384,31 @@ async function loadPtoBook() {
         day: "numeric",
       });
       const isoDate = pto.date.split("T")[0]; // YYYY-MM-DD format for input
-
       tbody.innerHTML += `
-        <tr data-id="${pto.id}">
-          <td>${pto.full_name}</td>
-          <td class="dateCell">
-            <span class="dateDisplay">${formattedDate}</span>
-            <input type="date" class="dateInput hidden" value="${isoDate}" />
-          </td>
-          <td class="hoursCell">
-            <span class="hoursDisplay">${pto.hours_used} hours</span>
-            <input type="number" class="hoursInput hidden" value="${pto.hours_used}" min="0" step="0.5" />
-          </td>
-          <td class="actions">
-            <button class="editBtn" data-id="${pto.id}">Edit</button>
-            <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
-            <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
-            <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
-          </td>
-        </tr>
-      `;
+  <tr data-id="${pto.id}">
+    <td>${pto.full_name}</td>
+    <td class="dateCell">
+      <span class="dateDisplay">${formattedDate}</span>
+      <input type="date" class="dateInput hidden" value="${isoDate}" />
+    </td>
+    <td class="hoursCell">
+      <span class="hoursDisplay">${pto.hours_used} hours</span>
+      <input type="number" class="hoursInput hidden" value="${
+        pto.hours_used
+      }" min="0" step="0.5" />
+    </td>
+    <td class="notesCell">
+      <span class="notesDisplay">${pto.notes || "-"}</span>
+    </td>
+    <td class="actions">
+      <button class="editBtn" data-id="${pto.id}">Edit</button>
+      <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
+      
+      <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
+      <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
+    </td>
+  </tr>
+`;
     });
   });
 

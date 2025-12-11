@@ -96,7 +96,14 @@
             <input type="number" id="ptoHours" value="8" required />
             <label for="ptoHours">Hours:</label>
           </div>
-
+          <div class="floatingGroup">
+            <input type='text'
+              id="ptoNotes"
+              rows="3"
+              placeholder="Reason for PTO (e.g., graduation, bereavement, vacation)"
+            ></input>
+            <label for="ptoNotes">Notes (Optional):</label>
+          </div>
           <button type="submit">Add PTO</button>
         </form>
       </div>
@@ -118,7 +125,7 @@
         <div id="summaryMobileContainer" class="mobileSummary hidden"></div>
       </div>
 
-      <!-- UPCOMING -->
+      <!-- PTO BOOK / UPCOMING-->
       <div id="upcoming" class="tabContent hidden">
         <h3>PTO Book</h3>
         <table id="upcomingTable">

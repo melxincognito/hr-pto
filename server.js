@@ -182,11 +182,11 @@ app.post("/api/admin/employees", ensureAdmin, async (req, res) => {
 
 // Add PTO Entry
 app.post("/api/admin/pto", ensureAdmin, async (req, res) => {
-  const { user_id, date, hours_used } = req.body;
+  const { user_id, date, hours_used, notes } = req.body;
   try {
     await db.query(
-      "INSERT INTO pto (user_id, date, hours_used) VALUES (?, ?, ?)",
-      [user_id, date, hours_used]
+      "INSERT INTO pto (user_id, date, hours_used, notes) VALUES (?, ?, ?, ?)",
+      [user_id, date, hours_used, notes || null]
     );
     res.sendStatus(201);
   } catch (err) {
@@ -241,7 +241,7 @@ app.get("/api/admin/summary", async (req, res) => {
 // Upcoming PTO - PTO Book API
 app.get("/api/admin/upcoming", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
-    "SELECT u.full_name, p.date, p.id, p.hours_used FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date DESC"
+    "SELECT u.full_name, p.date, p.id, p.hours_used, p.notes FROM pto p JOIN users u ON p.user_id = u.id ORDER BY p.date DESC"
   );
   res.json(rows);
 });

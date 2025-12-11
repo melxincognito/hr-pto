@@ -346,18 +346,6 @@ table tbody tr:nth-child(even) {
   cursor: pointer;
 }
 
-.editEmployeeBtn,
-.saveEmployeeBtn,
-.cancelEmployeeBtn,
-.resetPasswordBtn {
-  padding: 6px 12px;
-  margin: 0 2px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
 .editEmployeeBtn {
   background-color: #4caf50;
   color: white;

@@ -572,7 +572,7 @@ async function loadPastPtoHistory() {
 
       bodyContent += `
         <div class="workYearSection">
-          <h4>Year ${workYear} - ${totalDays} day${
+          <h4>Year ${workYear} - ${totalDays} PTO day${
         totalDays !== 1 ? "s" : ""
       } taken</h4>
           <div class="ptoEntries">

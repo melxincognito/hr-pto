@@ -118,6 +118,14 @@ app.get("/api/admin/employees", ensureAdmin, async (req, res) => {
   res.json(rows);
 });
 
+// Get active employees only (for PTO operations and summaries)
+app.get("/api/admin/employees/active", ensureAdmin, async (req, res) => {
+  const [rows] = await db.query(
+    "SELECT id, full_name, username, start_date, role, inactive FROM users WHERE role IN ('employee', 'admin') AND (inactive = 0) ORDER BY full_name ASC"
+  );
+  res.json(rows);
+});
+
 // Update employee
 app.put("/api/admin/employees/:id", ensureAdmin, async (req, res) => {
   const { id } = req.params;
@@ -190,7 +198,7 @@ app.post("/api/admin/pto", ensureAdmin, async (req, res) => {
 // PTO Summary
 app.get("/api/admin/summary", async (req, res) => {
   const [employees] = await db.query(
-    "SELECT id, full_name, start_date, total_pto_allowed FROM users WHERE role='employee' ORDER BY full_name ASC"
+    "SELECT id, full_name, start_date, total_pto_allowed, inactive FROM users WHERE role='employee' AND inactive = 0 ORDER BY full_name ASC"
   );
 
   const [policies] = await db.query(

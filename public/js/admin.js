@@ -39,14 +39,69 @@ document.getElementById("logoutMobile").addEventListener("click", async () => {
   window.sessionStorage.clear();
   window.location.href = "/login.html";
 });
-// Fetch Employees
+
+async function loadActivePtoUsers() {
+  const res = await fetch("/api/admin/employees/active");
+  const data = await res.json();
+  const select = document.getElementById("ptoUser");
+  select.innerHTML = "";
+  data.forEach((emp) => {
+    select.innerHTML += `<option value="${emp.id}">${emp.full_name}</option>`;
+  });
+}
+
+// Load Summary
+async function loadSummary() {
+  const res = await fetch("/api/admin/summary");
+  const data = await res.json();
+
+  // Desktop Layout
+  const tbody = document.querySelector("#summaryTable tbody");
+  tbody.innerHTML = "";
+  data.forEach((row) => {
+    tbody.innerHTML += `<tr><td>${row.full_name}</td><td>${row.total_allowed}</td><td>${row.used}</td><td>${row.remaining}</td></tr>`;
+  });
+
+  // MOBILE CARDS
+  const mobileContainer = document.querySelector("#summaryMobileContainer");
+  mobileContainer.innerHTML = "";
+
+  data.forEach((row) => {
+    mobileContainer.innerHTML += `
+      <div class="summaryCard">
+        <button class="summaryHeader">
+          <span>${row.full_name}</span>
+          <span class="arrow">▼</span>
+        </button>
+
+        <div class="summaryBody">
+          <div><strong>Total Allowed:</strong> ${row.total_allowed}</div>
+          <div><strong>Used:</strong> ${row.used}</div>
+          <div><strong>Remaining:</strong> ${row.remaining}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  // Enable expand/collapse
+  document.querySelectorAll(".summaryHeader").forEach((header) => {
+    header.addEventListener("click", () => {
+      const body = header.nextElementSibling;
+      const arrow = header.querySelector(".arrow");
+
+      body.classList.toggle("open");
+      arrow.classList.toggle("rotated");
+    });
+  });
+}
+
+// Fetch Employees for home add an employee page.
 async function loadEmployees() {
   const res = await fetch("/api/admin/employees");
   const data = await res.json();
   const tbody = document.querySelector("#employeeTable tbody");
-  const select = document.getElementById("ptoUser");
+
   tbody.innerHTML = "";
-  select.innerHTML = "";
 
   data.forEach((emp) => {
     // Format date nicely
@@ -78,8 +133,6 @@ async function loadEmployees() {
         </td>
       </tr>
     `;
-
-    select.innerHTML += `<option value="${emp.id}">${emp.full_name}</option>`;
   });
 
   // Attach edit event listeners
@@ -113,7 +166,7 @@ async function loadEmployees() {
 
       if (res.ok) {
         alert("Employee updated successfully!");
-        await loadEmployees();
+        await loadEmployees(), loadActivePtoUsers(), loadSummary();
       } else {
         alert("Error updating employee.");
       }
@@ -261,6 +314,7 @@ document
   });
 
 // Add PTO Entry
+
 document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const body = {
@@ -484,86 +538,6 @@ function exitEditMode(row) {
   row.querySelector(".cancelBtn").classList.add("hidden");
   row.querySelector(".deleteBtn").classList.add("hidden");
 }
-/*
-// Load PTO Book, this is the PTO history for just the year - Grouped by Month
-async function loadPtoBook() {
-  const res = await fetch("/api/admin/upcoming");
-  const data = await res.json();
-
-  const tbody = document.querySelector("#upcomingTable tbody");
-  tbody.innerHTML = "";
-
-  // Group PTO entries by month
-  const groupedByMonth = {};
-
-  data.forEach((pto) => {
-    const dateParts = pto.date.split("T")[0].split("-");
-    const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-
-    const monthYear = date.toLocaleString("en-US", {
-      month: "long",
-      year: "numeric",
-    });
-
-    if (!groupedByMonth[monthYear]) {
-      groupedByMonth[monthYear] = [];
-    }
-    groupedByMonth[monthYear].push(pto);
-  });
-
-  // Render each month group
-  Object.keys(groupedByMonth).forEach((monthYear) => {
-    // Add month header row
-    tbody.innerHTML += `
-      <tr class="monthHeader">
-        <td colspan="4"><strong>${monthYear}</strong></td>
-      </tr>
-    `;
-
-    // Add PTO entries for this month
-    groupedByMonth[monthYear].forEach((pto) => {
-      const dateParts = pto.date.split("T")[0].split("-");
-      const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-
-      const formattedDate = date.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      });
-
-      tbody.innerHTML += `
-        <tr>
-          <td>${pto.full_name}</td>
-          <td>${formattedDate}</td>
-          <td>${pto.hours_used} hours </td>
-          <td>
-            <button class="deleteBtn" data-id="${pto.id}">X</button>
-          </td>
-        </tr>
-      `;
-    });
-  });
-
-  // Attach delete event listeners
-  document.querySelectorAll(".deleteBtn").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
-      const id = e.target.dataset.id;
-      if (confirm("Are you sure you want to delete this PTO entry?")) {
-        const res = await fetch(`/api/admin/pto/${id}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          alert("PTO entry deleted!");
-          await loadPtoBook();
-          await loadSummary();
-        } else {
-          alert("Error deleting PTO entry.");
-        }
-      }
-    });
-  });
-}
- */
 // PTO Past Years History
 async function loadPastPtoHistory() {
   const res = await fetch("/api/admin/pastptohistory");
@@ -704,6 +678,7 @@ async function loadPolicies() {
 }
 
 loadEmployees();
+loadActivePtoUsers();
 loadSummary();
 loadPtoBook();
 loadPastPtoHistory();

@@ -92,20 +92,6 @@ button:hover {
 /* ===========================
    BUTTONS
    =========================== */
-.deleteBtn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 1rem;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: 0.2s;
-  width: 100%;
-}
-
-.deleteBtn:hover {
-  background-color: #b02a37;
-}
 
 .savePolicy {
   width: 100%;
@@ -671,11 +657,13 @@ input,
 .saveBtn {
   background-color: #2196f3;
   color: white;
+  width: fit-content;
 }
 
 .cancelBtn {
   background-color: #9e9e9e;
   color: white;
+  width: fit-content;
 }
 
 .deleteBtn {

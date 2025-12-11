@@ -219,8 +219,8 @@ async function loadPtoBook() {
           <td class="actions">
             <button class="editBtn" data-id="${pto.id}">Edit</button>
             <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
-            <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
             <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
+            <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
           </td>
         </tr>
       `;

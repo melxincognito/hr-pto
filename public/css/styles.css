@@ -255,6 +255,11 @@ table tbody tr:hover {
 table tbody tr:nth-child(even) {
   background-color: #ededed;
 }
+/* admin pto summary section */
+#ptoSummaryHeadingTr {
+  position: sticky;
+  top: 0;
+}
 
 /* ===========================
    PTO OVERVIEW (Employee Dashboard)

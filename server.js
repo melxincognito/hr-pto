@@ -112,7 +112,7 @@ app.listen(PORT, () =>
 // ADMIN ROUTES
 app.get("/api/admin/employees", ensureAdmin, async (req, res) => {
   const [rows] = await db.query(
-    "SELECT id, full_name, username, start_date FROM users WHERE role='employee'"
+    "SELECT id, full_name, username, start_date FROM users WHERE role='employee' ORDER BY full_name ASC"
   );
   res.json(rows);
 });
@@ -153,7 +153,7 @@ app.post("/api/admin/pto", ensureAdmin, async (req, res) => {
 // PTO Summary
 app.get("/api/admin/summary", async (req, res) => {
   const [employees] = await db.query(
-    "SELECT id, full_name, start_date, total_pto_allowed FROM users WHERE role='employee'"
+    "SELECT id, full_name, start_date, total_pto_allowed FROM users WHERE role='employee' ORDER BY full_name ASC"
   );
 
   const [policies] = await db.query(

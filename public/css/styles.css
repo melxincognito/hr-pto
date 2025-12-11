@@ -331,14 +331,6 @@ table tbody tr:nth-child(even) {
   min-width: 150px;
 }
 
-.nameInput,
-.usernameInput {
-  padding: 4px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 90%;
-}
-
 .checkboxCell {
   text-align: center;
 }

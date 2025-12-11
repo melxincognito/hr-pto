@@ -30,10 +30,21 @@ document.getElementById("logoutMobile").addEventListener("click", async () => {
   window.location.href = "/login.html";
   window.sessionStorage.clear();
 });
-
 async function loadEmployeePTO() {
   const res = await fetch("/api/employee/summary");
   const data = await res.json();
+
+  // Update employee name and start date
+  document.getElementById("employeeName").textContent = data.full_name;
+  const startDate = new Date(data.start_date);
+  const formattedStartDate = startDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  document.getElementById(
+    "startDate"
+  ).textContent = `Start Date: ${formattedStartDate}`;
 
   // Update PTO Overview
   document.getElementById("totalPto").textContent = data.total_pto_allowed;
@@ -60,7 +71,6 @@ async function loadEmployeePTO() {
   data.history.forEach((entry) => {
     const dateParts = entry.date.split("T")[0].split("-");
     const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-
     const formattedDate = date.toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
@@ -71,7 +81,6 @@ async function loadEmployeePTO() {
     // Convert hours to days
     const days = entry.hours_used / 8;
     let daysText;
-
     switch (days) {
       case 0:
         daysText = "Not counted towards PTO";

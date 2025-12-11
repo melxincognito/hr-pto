@@ -250,32 +250,30 @@ app.delete("/api/admin/pto/:id", async (req, res) => {
 });
 
 // Employee summary route
+// Employee summary route
 app.get("/api/employee/summary", ensureAuth, async (req, res) => {
   const userId = req.session.user.id;
-
   const [userRows] = await db.query(
-    "SELECT start_date, total_pto_allowed FROM users WHERE id = ?",
+    "SELECT full_name, start_date, total_pto_allowed FROM users WHERE id = ?",
     [userId]
   );
   const user = userRows[0];
   const total_pto_allowed = user.total_pto_allowed;
-
   const [usedRows] = await db.query(
     "SELECT COALESCE(SUM(hours_used), 0) AS hours_used FROM pto WHERE user_id = ?",
     [userId]
   );
-
   const totalHoursUsed = usedRows[0].hours_used;
   const used = totalHoursUsed / 8; // Convert hours to days (8 hours = 1 day)
   const remaining = total_pto_allowed - used;
-
   // PTO history
   const [history] = await db.query(
     "SELECT date, hours_used FROM pto WHERE user_id = ? ORDER BY date DESC",
     [userId]
   );
-
   res.json({
+    full_name: user.full_name,
+    start_date: user.start_date,
     used,
     remaining,
     history,

@@ -99,9 +99,19 @@ async function loadSummary() {
 async function loadEmployees() {
   const res = await fetch("/api/admin/employees/active");
   const data = await res.json();
-  const tbody = document.querySelector("#employeeTable tbody");
 
+  // Desktop table
+  const tbody = document.querySelector("#employeeTable tbody");
   tbody.innerHTML = "";
+
+  // Mobile container
+  let mobileContainer = document.querySelector(".mobileEmployees");
+  if (!mobileContainer) {
+    mobileContainer = document.createElement("div");
+    mobileContainer.className = "mobileEmployees";
+    document.querySelector("#employees").appendChild(mobileContainer);
+  }
+  mobileContainer.innerHTML = "";
 
   data.forEach((emp) => {
     // Format date nicely
@@ -114,6 +124,7 @@ async function loadEmployees() {
       year: "numeric",
     });
 
+    // Desktop table row
     tbody.innerHTML += `
       <tr data-id="${emp.id}" data-role="${emp.role}" data-inactive="${emp.inactive}">
         <td class="nameCell">
@@ -133,25 +144,90 @@ async function loadEmployees() {
         </td>
       </tr>
     `;
+
+    // Mobile card
+    const employeeCard = document.createElement("div");
+    employeeCard.className = "employeeCard";
+    employeeCard.dataset.id = emp.id;
+    employeeCard.dataset.role = emp.role;
+    employeeCard.dataset.inactive = emp.inactive;
+    employeeCard.innerHTML = `
+      <div class="employeeCardHeader">${emp.full_name}</div>
+      <div class="employeeCardBody">
+        <div class="employeeCardRow">
+          <strong>Name:</strong>
+          <span class="nameDisplay">${emp.full_name}</span>
+          <input type="text" class="nameInput hidden" value="${
+            emp.full_name
+          }" />
+        </div>
+        <div class="employeeCardRow">
+          <strong>Username:</strong>
+          <span class="usernameDisplay">${emp.username}</span>
+          <input type="text" class="usernameInput hidden" value="${
+            emp.username
+          }" />
+        </div>
+        <div class="employeeCardRow">
+          <strong>Start Date:</strong>
+          <span>${formattedDate}</span>
+        </div>
+        <div class="employeeCheckboxRow hidden">
+          <label>
+            <input type="checkbox" class="adminCheckbox" ${
+              emp.role === "admin" ? "checked" : ""
+            } />
+            Admin
+          </label>
+          <label>
+            <input type="checkbox" class="inactiveCheckbox" ${
+              emp.inactive ? "checked" : ""
+            } />
+            Inactive
+          </label>
+        </div>
+        <div class="employeeCardActions">
+          <button class="editEmployeeBtn" data-id="${
+            emp.id
+          }">Edit Employee</button>
+          <button class="saveEmployeeBtn hidden" data-id="${
+            emp.id
+          }">Save Changes</button>
+          <button class="resetPasswordBtn hidden" data-id="${
+            emp.id
+          }">Reset Password</button>
+          <button class="cancelEmployeeBtn hidden" data-id="${
+            emp.id
+          }">Cancel</button>
+        </div>
+      </div>
+    `;
+
+    mobileContainer.appendChild(employeeCard);
   });
 
-  // Attach edit event listeners
+  // Attach event listeners (works for both desktop and mobile)
+  attachEmployeeEventListeners();
+}
+
+function attachEmployeeEventListeners() {
+  // Edit buttons
   document.querySelectorAll(".editEmployeeBtn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const row = e.target.closest("tr");
-      enterEmployeeEditMode(row);
+      const container = e.target.closest("tr, .employeeCard");
+      enterEmployeeEditMode(container);
     });
   });
 
-  // Attach save event listeners
+  // Save buttons
   document.querySelectorAll(".saveEmployeeBtn").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
-      const row = e.target.closest("tr");
-      const fullName = row.querySelector(".nameInput").value;
-      const username = row.querySelector(".usernameInput").value;
-      const isAdmin = row.querySelector(".adminCheckbox").checked;
-      const isInactive = row.querySelector(".inactiveCheckbox").checked;
+      const container = e.target.closest("tr, .employeeCard");
+      const fullName = container.querySelector(".nameInput").value;
+      const username = container.querySelector(".usernameInput").value;
+      const isAdmin = container.querySelector(".adminCheckbox").checked;
+      const isInactive = container.querySelector(".inactiveCheckbox").checked;
 
       const res = await fetch(`/api/admin/employees/${id}`, {
         method: "PUT",
@@ -166,22 +242,24 @@ async function loadEmployees() {
 
       if (res.ok) {
         alert("Employee updated successfully!");
-        await loadEmployees(), loadActivePtoUsers(), loadSummary();
+        await loadEmployees();
+        await loadActivePtoUsers();
+        await loadSummary();
       } else {
         alert("Error updating employee.");
       }
     });
   });
 
-  // Attach cancel event listeners
+  // Cancel buttons
   document.querySelectorAll(".cancelEmployeeBtn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const row = e.target.closest("tr");
-      exitEmployeeEditMode(row);
+      const container = e.target.closest("tr, .employeeCard");
+      exitEmployeeEditMode(container);
     });
   });
 
-  // Attach reset password event listeners
+  // Reset password buttons
   document.querySelectorAll(".resetPasswordBtn").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
@@ -193,7 +271,6 @@ async function loadEmployees() {
         const res = await fetch(`/api/admin/employees/${id}/reset-password`, {
           method: "PUT",
         });
-
         if (res.ok) {
           alert("Password reset successfully!");
         } else {
@@ -204,6 +281,66 @@ async function loadEmployees() {
   });
 }
 
+function enterEmployeeEditMode(container) {
+  // Hide display spans, show input fields
+  container.querySelectorAll(".nameDisplay, .usernameDisplay").forEach((el) => {
+    el.classList.add("hidden");
+  });
+  container.querySelectorAll(".nameInput, .usernameInput").forEach((el) => {
+    el.classList.remove("hidden");
+  });
+
+  // Show checkboxes
+  const checkboxRow = container.querySelector(".employeeCheckboxRow");
+  if (checkboxRow) {
+    checkboxRow.classList.remove("hidden");
+  }
+
+  // Toggle buttons
+  container.querySelector(".editEmployeeBtn").classList.add("hidden");
+  container
+    .querySelectorAll(".saveEmployeeBtn, .resetPasswordBtn, .cancelEmployeeBtn")
+    .forEach((el) => {
+      el.classList.remove("hidden");
+    });
+
+  // Add editMode class for mobile styling
+  if (container.classList.contains("employeeCard")) {
+    container.classList.add("editMode");
+  }
+}
+
+function exitEmployeeEditMode(container) {
+  // Show display spans, hide input fields
+  container.querySelectorAll(".nameDisplay, .usernameDisplay").forEach((el) => {
+    el.classList.remove("hidden");
+  });
+  container.querySelectorAll(".nameInput, .usernameInput").forEach((el) => {
+    el.classList.add("hidden");
+  });
+
+  // Hide checkboxes
+  const checkboxRow = container.querySelector(".employeeCheckboxRow");
+  if (checkboxRow) {
+    checkboxRow.classList.add("hidden");
+  }
+
+  // Toggle buttons
+  container.querySelector(".editEmployeeBtn").classList.remove("hidden");
+  container
+    .querySelectorAll(".saveEmployeeBtn, .resetPasswordBtn, .cancelEmployeeBtn")
+    .forEach((el) => {
+      el.classList.add("hidden");
+    });
+
+  // Remove editMode class for mobile styling
+  if (container.classList.contains("employeeCard")) {
+    container.classList.remove("editMode");
+  }
+
+  // Reload to restore original values
+  loadEmployees();
+}
 function enterEmployeeEditMode(row) {
   const role = row.dataset.role;
   const inactive = row.dataset.inactive === "1";

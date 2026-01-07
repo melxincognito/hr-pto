@@ -97,7 +97,7 @@ async function loadSummary() {
 
 // Fetch Employees for home add an employee page.
 async function loadEmployees() {
-  const res = await fetch("/api/admin/employees");
+  const res = await fetch("/api/admin/employees/active");
   const data = await res.json();
   const tbody = document.querySelector("#employeeTable tbody");
 

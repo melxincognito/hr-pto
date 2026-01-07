@@ -690,7 +690,7 @@ input,
    RESPONSIVE (MOBILE)
    =========================== */
 @media (max-width: 600px) {
-  body {
+  .container {
     overflow-x: hidden;
   }
   /* Login */

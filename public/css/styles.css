@@ -377,6 +377,97 @@ table tbody tr:nth-child(even) {
   background-color: #3066ab !important;
 }
 
+/* PTO BOOK MOBILE RESPONSIVE */
+
+/* Mobile PTO Cards */
+.mobilePtoBook {
+  display: none;
+}
+
+.ptoCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  border-radius: 1rem;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ptoMonthHeader {
+  background: #3066ab;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 2px solid #1e3a5f;
+}
+
+.ptoEntryCard {
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ptoEntryCard:last-child {
+  border-bottom: none;
+}
+
+.ptoCardRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.ptoCardRow strong {
+  color: #334155;
+  min-width: 80px;
+}
+
+.ptoCardRow span {
+  color: #1e293b;
+  text-align: right;
+  flex: 1;
+}
+
+.ptoCardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ptoCardActions button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Edit mode for mobile cards */
+.ptoEntryCard.editMode .ptoCardRow input,
+.ptoEntryCard.editMode .ptoCardRow select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  #upcomingTable {
+    display: none;
+  }
+
+  .mobilePtoBook {
+    display: block;
+  }
+
+  /* Adjust heading */
+  #upcoming h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+}
+
 /* ===========================
    HISTORY & POLICY SECTIONS
    =========================== */
@@ -686,6 +777,7 @@ input,
 .deleteBtn:hover {
   opacity: 0.8;
 }
+
 /* ===========================
    RESPONSIVE (MOBILE)
    =========================== */

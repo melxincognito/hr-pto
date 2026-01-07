@@ -340,15 +340,28 @@ document.getElementById("addPtoForm").addEventListener("submit", async (e) => {
   }
 });
 
+// PTO BOOK
+
 async function loadPtoBook() {
   const res = await fetch("/api/admin/upcoming");
   const data = await res.json();
+
+  // Desktop table
   const tbody = document.querySelector("#upcomingTable tbody");
   tbody.innerHTML = "";
 
+  // Mobile container
+  let mobileContainer = document.querySelector(".mobilePtoBook");
+  if (!mobileContainer) {
+    mobileContainer = document.createElement("div");
+    mobileContainer.className = "mobilePtoBook";
+    document.querySelector("#upcoming").appendChild(mobileContainer);
+  }
+  mobileContainer.innerHTML = "";
+
   // Group PTO entries by month
   const groupedByMonth = {};
-  const monthOrder = []; // Track the order of months
+  const monthOrder = [];
 
   data.forEach((pto) => {
     const dateParts = pto.date.split("T")[0].split("-");
@@ -360,21 +373,25 @@ async function loadPtoBook() {
 
     if (!groupedByMonth[monthYear]) {
       groupedByMonth[monthYear] = [];
-      monthOrder.push(monthYear); // Keep track of month order
+      monthOrder.push(monthYear);
     }
     groupedByMonth[monthYear].push(pto);
   });
 
-  // Render each month group in the order they appear (already newest first)
+  // Render for both desktop and mobile
   monthOrder.forEach((monthYear) => {
-    // Add month header row
+    // Desktop table rows
     tbody.innerHTML += `
       <tr class="monthHeader">
         <td colspan="5"><strong>${monthYear}</strong></td>
       </tr>
     `;
 
-    // Add PTO entries for this month
+    // Mobile month section
+    const monthCard = document.createElement("div");
+    monthCard.className = "ptoCard";
+    monthCard.innerHTML = `<div class="ptoMonthHeader">${monthYear}</div>`;
+
     groupedByMonth[monthYear].forEach((pto) => {
       const dateParts = pto.date.split("T")[0].split("-");
       const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
@@ -383,50 +400,93 @@ async function loadPtoBook() {
         month: "short",
         day: "numeric",
       });
-      const isoDate = pto.date.split("T")[0]; // YYYY-MM-DD format for input
+      const isoDate = pto.date.split("T")[0];
+
+      // Desktop table row
       tbody.innerHTML += `
-  <tr data-id="${pto.id}">
-    <td>${pto.full_name}</td>
-    <td class="dateCell">
-      <span class="dateDisplay">${formattedDate}</span>
-      <input type="date" class="dateInput hidden" value="${isoDate}" />
-    </td>
-    <td class="hoursCell">
-      <span class="hoursDisplay">${pto.hours_used} hours</span>
-      <input type="number" class="hoursInput hidden" value="${
-        pto.hours_used
-      }" min="0" step="0.5" />
-    </td>
-    <td class="notesCell">
-      <span class="notesDisplay">${pto.notes || "-"}</span>
-    </td>
-    <td class="actions">
-      <button class="editBtn" data-id="${pto.id}">Edit</button>
-      <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
-      
-      <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
-      <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
-    </td>
-  </tr>
-`;
+        <tr data-id="${pto.id}">
+          <td>${pto.full_name}</td>
+          <td class="dateCell">
+            <span class="dateDisplay">${formattedDate}</span>
+            <input type="date" class="dateInput hidden" value="${isoDate}" />
+          </td>
+          <td class="hoursCell">
+            <span class="hoursDisplay">${pto.hours_used} hours</span>
+            <input type="number" class="hoursInput hidden" value="${
+              pto.hours_used
+            }" min="0" step="0.5" />
+          </td>
+          <td class="notesCell">
+            <span class="notesDisplay">${pto.notes || "-"}</span>
+          </td>
+          <td class="actions">
+            <button class="editBtn" data-id="${pto.id}">Edit</button>
+            <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
+            <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
+            <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
+          </td>
+        </tr>
+      `;
+
+      // Mobile card
+      const entryCard = document.createElement("div");
+      entryCard.className = "ptoEntryCard";
+      entryCard.dataset.id = pto.id;
+      entryCard.innerHTML = `
+        <div class="ptoCardRow">
+          <strong>Employee:</strong>
+          <span class="nameDisplay">${pto.full_name}</span>
+        </div>
+        <div class="ptoCardRow">
+          <strong>Date:</strong>
+          <span class="dateDisplay">${formattedDate}</span>
+          <input type="date" class="dateInput hidden" value="${isoDate}" />
+        </div>
+        <div class="ptoCardRow">
+          <strong>Hours:</strong>
+          <span class="hoursDisplay">${pto.hours_used} hours</span>
+          <input type="number" class="hoursInput hidden" value="${
+            pto.hours_used
+          }" min="0" step="0.5" />
+        </div>
+        <div class="ptoCardRow">
+          <strong>Notes:</strong>
+          <span class="notesDisplay">${pto.notes || "-"}</span>
+        </div>
+        <div class="ptoCardActions">
+          <button class="editBtn" data-id="${pto.id}">Edit</button>
+          <button class="saveBtn hidden" data-id="${pto.id}">Save</button>
+          <button class="deleteBtn hidden" data-id="${pto.id}">Delete</button>
+          <button class="cancelBtn hidden" data-id="${pto.id}">Cancel</button>
+        </div>
+      `;
+
+      monthCard.appendChild(entryCard);
     });
+
+    mobileContainer.appendChild(monthCard);
   });
 
-  // Attach edit event listeners
+  // Attach event listeners (works for both desktop and mobile)
+  attachPtoEventListeners();
+}
+
+function attachPtoEventListeners() {
+  // Edit buttons
   document.querySelectorAll(".editBtn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const row = e.target.closest("tr");
-      enterEditMode(row);
+      const container = e.target.closest("tr, .ptoEntryCard");
+      enterEditMode(container);
     });
   });
 
-  // Attach save event listeners
+  // Save buttons
   document.querySelectorAll(".saveBtn").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
-      const row = e.target.closest("tr");
-      const newDate = row.querySelector(".dateInput").value;
-      const newHours = row.querySelector(".hoursInput").value;
+      const container = e.target.closest("tr, .ptoEntryCard");
+      const newDate = container.querySelector(".dateInput").value;
+      const newHours = container.querySelector(".hoursInput").value;
 
       const res = await fetch(`/api/admin/pto/${id}`, {
         method: "PUT",
@@ -444,15 +504,15 @@ async function loadPtoBook() {
     });
   });
 
-  // Attach cancel event listeners
+  // Cancel buttons
   document.querySelectorAll(".cancelBtn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const row = e.target.closest("tr");
-      exitEditMode(row);
+      const container = e.target.closest("tr, .ptoEntryCard");
+      exitEditMode(container);
     });
   });
 
-  // Attach delete event listeners
+  // Delete buttons
   document.querySelectorAll(".deleteBtn").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
@@ -472,6 +532,49 @@ async function loadPtoBook() {
   });
 }
 
+function enterEditMode(container) {
+  container
+    .querySelectorAll(".dateDisplay, .hoursDisplay, .notesDisplay")
+    .forEach((el) => {
+      el.classList.add("hidden");
+    });
+  container.querySelectorAll(".dateInput, .hoursInput").forEach((el) => {
+    el.classList.remove("hidden");
+  });
+  container.querySelector(".editBtn").classList.add("hidden");
+  container
+    .querySelectorAll(".saveBtn, .cancelBtn, .deleteBtn")
+    .forEach((el) => {
+      el.classList.remove("hidden");
+    });
+
+  // Add editMode class for mobile styling
+  if (container.classList.contains("ptoEntryCard")) {
+    container.classList.add("editMode");
+  }
+}
+
+function exitEditMode(container) {
+  container
+    .querySelectorAll(".dateDisplay, .hoursDisplay, .notesDisplay")
+    .forEach((el) => {
+      el.classList.remove("hidden");
+    });
+  container.querySelectorAll(".dateInput, .hoursInput").forEach((el) => {
+    el.classList.add("hidden");
+  });
+  container.querySelector(".editBtn").classList.remove("hidden");
+  container
+    .querySelectorAll(".saveBtn, .cancelBtn, .deleteBtn")
+    .forEach((el) => {
+      el.classList.add("hidden");
+    });
+
+  // Remove editMode class for mobile styling
+  if (container.classList.contains("ptoEntryCard")) {
+    container.classList.remove("editMode");
+  }
+}
 function enterEditMode(row) {
   // Hide display elements and show input fields
   row.querySelector(".dateDisplay").classList.add("hidden");

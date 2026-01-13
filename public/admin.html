@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/admin.css" />
     <script src="js/admin.js" defer></script>
+    
   </head>
   <body>
     <div class="navbar">
@@ -26,6 +27,7 @@
           <button class="mobileTabBtn" data-tab="upcoming">PTO Book</button>
           <button class="mobileTabBtn" data-tab="pastPto">PTO History</button>
           <button class="mobileTabBtn" data-tab="policy">PTO Policy</button>
+          <button class="mobileTabBtn" data-tab="settings">Settings</button>
           <button id="logoutMobile" class="mobileLogoutBtn">Logout</button>
         </div>
       </div>
@@ -36,6 +38,7 @@
       <button class="tabBtn" data-tab="upcoming">PTO Book</button>
       <button class="tabBtn" data-tab="pastPto">PTO History</button>
       <button class="tabBtn" data-tab="policy">PTO Policy</button>
+      <button class="tabBtn" data-tab="settings">Settings</button>
 
       <button class="tabBtn logoutBtn" id="logoutBtn">Logout</button>
     </div>
@@ -155,6 +158,26 @@
           <tbody></tbody>
         </table>
         <div id="policyMobileContainer" class="mobilePolicy hidden"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="settings" class="tabContent hidden">
+        <div class="settingsContainer">
+          <h3>Change Password</h3>
+          <form id="passwordForm" class="settingsForm">
+            <div class="floatingGroup">
+              <input type="password" id="oldPassword" placeholder=" " required />
+              <label for="oldPassword">Current Password</label>
+            </div>
+            <div class="floatingGroup">
+              <input type="password" id="newPassword" placeholder=" " required />
+              <label for="newPassword">New Password</label>
+            </div>
+            <button type="submit">Update Password</button>
+            <p id="settingsError" class="error"></p>
+            <p id="settingsSuccess" class="success"></p>
+          </form>
+        </div>
       </div>
     </div>
   </body>

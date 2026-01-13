@@ -452,6 +452,7 @@ async function updateCarryOvers() {
 
   const today = new Date();
   const currentYear = today.getFullYear();
+  const previousYear = currentYear - 1; // ← Add this
   const currentMonth = today.getMonth() + 1;
   const currentDay = today.getDate();
 
@@ -477,10 +478,10 @@ async function updateCarryOvers() {
         [user.id]
       );
 
-      // PTO used last year - SUM hours and convert to days
+      // PTO used LAST year - SUM hours and convert to days
       const [ptoUsed] = await db.query(
         "SELECT COALESCE(SUM(hours_used), 0) AS hours_used FROM pto WHERE user_id = ? AND YEAR(date) = ?",
-        [user.id, currentYear]
+        [user.id, previousYear] // ← Changed from currentYear to previousYear
       );
 
       const currentPto = currentPtoAllowed[0].total_pto_allowed;
@@ -499,7 +500,6 @@ async function updateCarryOvers() {
 
     // Choose correct PTO policy tier based on years worked
     let allowedDays = 0;
-
     if (yearsWorked <= 3) {
       allowedDays = policies[yearsWorked].days_allowed;
     } else {
@@ -519,24 +519,19 @@ async function updateCarryOvers() {
              last_carry_year = ?, 
              last_policy_update_year = ?, 
              carried_over = ?
-
          WHERE id = ?`,
         [newTotalAllowed, currentYear, currentYear, carryOver, user.id]
       );
 
       await db.query(
         `INSERT INTO pto_history (user_id, date, hours_used, created_at)
-          SELECT user_id, date, hours_used, created_at
-          FROM pto
-          WHERE user_id = ?;`,
+         SELECT user_id, date, hours_used, created_at
+         FROM pto
+         WHERE user_id = ?;`,
         [user.id]
       );
 
-      await db.query(
-        `DELETE FROM pto
-          WHERE user_id = ?`,
-        [user.id]
-      );
+      await db.query(`DELETE FROM pto WHERE user_id = ?`, [user.id]);
     }
   }
 }

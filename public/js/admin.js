@@ -967,6 +967,39 @@ async function loadPolicies() {
   });
 }
 
+// Handle password update
+document
+  .getElementById("passwordForm")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const oldPassword = document.getElementById("oldPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+
+    const res = await fetch("/api/employee/change-password", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        old_password: oldPassword,
+        new_password: newPassword,
+      }),
+    });
+
+    const data = await res.json();
+    const error = document.getElementById("settingsError");
+    const success = document.getElementById("settingsSuccess");
+
+    error.textContent = "";
+    success.textContent = "";
+
+    if (data.error) {
+      error.textContent = data.error;
+    } else {
+      success.textContent = "Password updated successfully!";
+      document.getElementById("passwordForm").reset();
+    }
+  });
+
 loadEmployees();
 loadActivePtoUsers();
 loadSummary();

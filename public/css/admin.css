@@ -466,6 +466,74 @@ input,
     font-size: 1.1rem;
   }
 }
+/* mobile policy change cards */
+.policyCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  border-radius: 1rem;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.policyHeader {
+  width: 100%;
+  background: #5e9747;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.policyHeader .arrow {
+  transition: transform 0.2s ease;
+}
+
+.policyHeader .arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.policyBody {
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.policyBody.open {
+  display: flex;
+}
+
+.policyBody label {
+  font-weight: 600;
+  margin-top: 5px;
+  color: #334155;
+}
+
+.policyBody input {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  margin-bottom: 10px;
+}
+
+.policyBody button {
+  margin-top: 10px;
+  padding: 12px;
+  background-color: #3066ab;
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.policyBody button:hover {
+  background-color: #3877c9;
+}
 
 #settings .settingsContainer {
   max-width: 450px;

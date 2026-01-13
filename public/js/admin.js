@@ -866,7 +866,6 @@ async function loadPastPtoHistory() {
     });
   });
 }
-
 // Load PTO Policies
 async function loadPolicies() {
   const res = await fetch("/api/policy");
@@ -906,7 +905,7 @@ async function loadPolicies() {
         if (res.ok) {
           alert("Policy updated and employee PTO recalculated!");
           await loadPolicies();
-          await loadSummary(); // Refresh the summary to show updated totals
+          await loadSummary();
         } else {
           alert("Error updating policy");
         }
@@ -919,10 +918,11 @@ async function loadPolicies() {
   mobileContainer.innerHTML = "";
 
   data.forEach((p) => {
-    mobileContainer.innerHTML += `
-    <div class="policyCard">
-      <button class="policyHeader">
-        <span>${p.years_of_service} Years</span>
+    const card = document.createElement("div");
+    card.className = "policyCard";
+    card.innerHTML = `
+      <button class="policyHeader" type="button">
+        <span>${p.years_of_service} Years of Service</span>
         <span class="arrow">▼</span>
       </button>
 
@@ -933,30 +933,32 @@ async function loadPolicies() {
         <label>Notes</label>
         <input type="text" class="notesInput" data-id="${p.id}" value="${p.notes}" />
 
-        <button class="savePolicy" data-id="${p.id}">Save</button>
+        <button class="savePolicy" data-id="${p.id}" type="button">Save Changes</button>
       </div>
-    </div>
-  `;
+    `;
+    mobileContainer.appendChild(card);
   });
 
-  // Enable dropdown behavior
+  // Enable dropdown behavior for mobile
   document.querySelectorAll(".policyHeader").forEach((header) => {
-    header.addEventListener("click", () => {
+    header.addEventListener("click", (e) => {
+      e.preventDefault();
       const body = header.nextElementSibling;
+      const arrow = header.querySelector(".arrow");
+
       body.classList.toggle("open");
+      arrow.classList.toggle("rotated");
     });
   });
 
   // Attach savePolicy click events for mobile
   mobileContainer.querySelectorAll(".savePolicy").forEach((btn) => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
       const id = btn.dataset.id;
-      const days = mobileContainer.querySelector(
-        `.daysInput[data-id="${id}"]`
-      ).value;
-      const notes = mobileContainer.querySelector(
-        `.notesInput[data-id="${id}"]`
-      ).value;
+      const card = btn.closest(".policyCard");
+      const days = card.querySelector(`.daysInput[data-id="${id}"]`).value;
+      const notes = card.querySelector(`.notesInput[data-id="${id}"]`).value;
 
       if (
         confirm(

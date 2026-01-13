@@ -540,22 +540,93 @@ async function updateCarryOvers() {
 cron.schedule("0 0 * * *", () => {
   updateCarryOvers().catch((err) => console.error("Carry-over error:", err));
 });
-
+// PUT /api/admin/policy/:id - Update PTO policy and recalculate employee PTO
 app.put("/api/admin/policy/:id", ensureAdmin, async (req, res) => {
   const { id } = req.params;
   const { days_allowed, notes } = req.body;
+
   try {
+    // 1. Update the policy
     await db.query(
       "UPDATE policy SET days_allowed = ?, notes = ? WHERE id = ?",
       [days_allowed, notes, id]
     );
-    res.sendStatus(200);
+
+    // 2. Get the policy tier (years_of_service)
+    const [policyData] = await db.query(
+      "SELECT years_of_service FROM policy WHERE id = ?",
+      [id]
+    );
+
+    if (policyData.length === 0) {
+      return res.status(404).json({ error: "Policy not found" });
+    }
+
+    const yearsOfService = policyData[0].years_of_service;
+
+    // 3. Recalculate PTO for all employees in this tier
+    await recalculateEmployeePTO(yearsOfService, parseInt(days_allowed));
+
+    res.json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
+    console.error("Error updating policy:", err);
+    res.status(500).json({ error: "Failed to update policy" });
   }
 });
 
+// Helper function to recalculate PTO for employees
+async function recalculateEmployeePTO(yearsOfService, newDaysAllowed) {
+  try {
+    // Get all active employees
+    const [employees] = await db.query(
+      "SELECT id, start_date, carried_over FROM users WHERE role = 'employee' AND inactive = 0"
+    );
+
+    const today = new Date();
+
+    for (const employee of employees) {
+      const startDate = new Date(employee.start_date);
+
+      // Calculate years worked
+      const yearsWorked = Math.floor(
+        (today - startDate) / (1000 * 60 * 60 * 24 * 365)
+      );
+
+      // Determine if this employee is in the policy tier we just updated
+      let isInThisTier = false;
+
+      if (yearsOfService === 0 && yearsWorked === 0) {
+        isInThisTier = true;
+      } else if (yearsOfService === 1 && yearsWorked === 1) {
+        isInThisTier = true;
+      } else if (yearsOfService === 2 && yearsWorked === 2) {
+        isInThisTier = true;
+      } else if (yearsOfService === 3 && yearsWorked === 3) {
+        isInThisTier = true;
+      } else if (yearsOfService === 4 && yearsWorked >= 4) {
+        isInThisTier = true;
+      }
+
+      // If employee is in this tier, update their total PTO
+      if (isInThisTier) {
+        // carried_over is already in DAYS
+        const carriedOverDays = parseFloat(employee.carried_over) || 0;
+
+        // newDaysAllowed is in DAYS
+        const totalDays = parseInt(newDaysAllowed) + carriedOverDays;
+
+        // Update total_pto_allowed (stored as DAYS in database)
+        await db.query("UPDATE users SET total_pto_allowed = ? WHERE id = ?", [
+          totalDays,
+          employee.id,
+        ]);
+      }
+    }
+  } catch (err) {
+    console.error("Error recalculating employee PTO:", err);
+    throw err;
+  }
+}
 // manual run carryover delete while in production just to go the endpoint /run-carryover to manually run this shit
 app.get("/run-carryover", async (req, res) => {
   try {

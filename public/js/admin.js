@@ -871,9 +871,9 @@ async function loadPastPtoHistory() {
 async function loadPolicies() {
   const res = await fetch("/api/policy");
   const data = await res.json();
-
   const tbody = document.querySelector("#policyTable tbody");
   tbody.innerHTML = "";
+
   data.forEach((p) => {
     tbody.innerHTML += `
       <tr>
@@ -892,17 +892,24 @@ async function loadPolicies() {
         `.notesInput[data-id="${id}"]`
       ).value;
 
-      const res = await fetch(`/api/admin/policy/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ days_allowed: days, notes }),
-      });
+      if (
+        confirm(
+          "This will update the policy and recalculate PTO for all affected employees. Continue?"
+        )
+      ) {
+        const res = await fetch(`/api/admin/policy/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ days_allowed: days, notes }),
+        });
 
-      if (res.ok) {
-        alert("Policy updated!");
-        await loadPolicies();
-      } else {
-        alert("Error updating policy");
+        if (res.ok) {
+          alert("Policy updated and employee PTO recalculated!");
+          await loadPolicies();
+          await loadSummary(); // Refresh the summary to show updated totals
+        } else {
+          alert("Error updating policy");
+        }
       }
     });
   });
@@ -951,22 +958,28 @@ async function loadPolicies() {
         `.notesInput[data-id="${id}"]`
       ).value;
 
-      const res = await fetch(`/api/admin/policy/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ days_allowed: days, notes }),
-      });
+      if (
+        confirm(
+          "This will update the policy and recalculate PTO for all affected employees. Continue?"
+        )
+      ) {
+        const res = await fetch(`/api/admin/policy/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ days_allowed: days, notes }),
+        });
 
-      if (res.ok) {
-        alert("Policy updated!");
-        await loadPolicies();
-      } else {
-        alert("Error updating policy");
+        if (res.ok) {
+          alert("Policy updated and employee PTO recalculated!");
+          await loadPolicies();
+          await loadSummary();
+        } else {
+          alert("Error updating policy");
+        }
       }
     });
   });
 }
-
 // Handle password update
 document
   .getElementById("passwordForm")

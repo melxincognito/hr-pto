@@ -103,12 +103,13 @@ _[TODO: Add deployment instructions]_
 
 ## Usage
 
-_[TODO: Add usage instructions or screenshots]_
-
 1. Navigate to login page
 2. Enter credentials
 3. Redirected based on role (admin/employee)
-4. [Continue with specific workflows]
+4. EMPLOYEES - Upon login, employees are directed to a comprehensive, read-only dashboard providing complete visibility into their PTO status. The interface displays their total annual PTO allowance, days used, and remaining balance at a glance. A detailed usage history tracks all PTO taken throughout the year, while an information panel highlights key PTO policies, company holidays, and important guidelines. The dashboard also features real-time updates reflecting the current company PTO policy based on years of service. The only interactive element is a secure password change form accessible through the settings menu.
+5. ADMIN - Administrators access a full-featured management portal with comprehensive control over the entire PTO system. The employee management section enables admins to onboard new team members by entering their full name, unique username, temporary password, and start date. All employee details remain editable to accommodate corrections, name changes, or role adjustments—including the ability to grant admin privileges or mark employees as inactive.
+   The PTO entry interface allows admins to log time off on behalf of employees, while the summary view provides an at-a-glance overview of each employee's annual allowance, current usage, and remaining balance. The PTO Book functions as a chronological transaction ledger, displaying all upcoming and historical time-off entries in an intuitive feed format. Admins can edit entries directly within the book to correct clerical errors or update changed plans.
+   The PTO History tab maintains a complete archive of all employee PTO records, including historical data for both active and former staff members. The PTO Policy section empowers admins to adjust allowances by years of service—changes automatically recalculate and update every affected employee's total allowance in real-time. Finally, a dedicated settings page provides secure password management for administrative accounts.
 
 ## Maintenance
 
@@ -119,9 +120,3 @@ _[TODO: Add usage instructions or screenshots]_
 ## Support
 
 For technical issues or access problems, contact: Melanie Gonzalez melanie@schoolsplp.com
-
-## Future Enhancements
-
-- PTO request/approval workflow
-
----

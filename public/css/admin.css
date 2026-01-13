@@ -1,0 +1,468 @@
+/* ADMIN TABS & CONTENT */
+.tabContent {
+  padding: 20px;
+}
+
+.tabBtn {
+  margin: 5px;
+}
+
+.logoutBtnDesktop {
+  display: inline-block;
+}
+
+/* BUTTONS */
+.savePolicy {
+  width: 100%;
+}
+
+.editBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.saveBtn {
+  background-color: #2196f3;
+  color: white;
+  width: fit-content;
+  margin: 1.5rem 0.2rem;
+}
+
+.cancelBtn {
+  background-color: #9e9e9e;
+  color: white;
+  width: fit-content;
+  margin: 1.5rem 0.2rem;
+}
+
+.deleteBtn {
+  background-color: #f44336;
+  color: white;
+  width: fit-content;
+  margin: 1.5rem 0.2rem;
+}
+
+.editBtn:hover,
+.saveBtn:hover,
+.cancelBtn:hover,
+.deleteBtn:hover {
+  opacity: 0.8;
+}
+
+.editEmployeeBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.saveEmployeeBtn {
+  background-color: #2196f3;
+  color: white;
+  margin: 1.5rem 0.2rem;
+}
+
+.cancelEmployeeBtn {
+  background-color: #9e9e9e;
+  color: white;
+  margin: 1.5rem 0.2rem;
+}
+
+.resetPasswordBtn {
+  background-color: #ff9800;
+  color: white;
+  margin: 1.5rem 0.2rem;
+}
+
+.editEmployeeBtn:hover,
+.saveEmployeeBtn:hover,
+.cancelEmployeeBtn:hover,
+.resetPasswordBtn:hover {
+  opacity: 0.8;
+}
+
+/* EMPLOYEE TABLE */
+.nameCell,
+.usernameCell {
+  min-width: 150px;
+}
+
+.checkboxCell {
+  text-align: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* EMPLOYEES MOBILE RESPONSIVE */
+.mobileEmployees {
+  display: none;
+}
+
+.employeeCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 15px;
+  border-radius: 1rem;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.employeeCardHeader {
+  background: #3066ab;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.employeeCardBody {
+  padding: 15px;
+}
+
+.employeeCardRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.employeeCardRow strong {
+  color: #334155;
+  min-width: 100px;
+}
+
+.employeeCardRow span {
+  color: #1e293b;
+  text-align: right;
+  flex: 1;
+}
+
+.employeeCardRow input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.employeeCheckboxRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.employeeCheckboxRow label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.employeeCheckboxRow input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.employeeCardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.employeeCardActions button {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.employeeCard.editMode .nameDisplay,
+.employeeCard.editMode .usernameDisplay {
+  display: none;
+}
+
+.employeeCard.editMode .nameInput,
+.employeeCard.editMode .usernameInput {
+  display: block;
+}
+
+/* PTO SUMMARY */
+#ptoSummaryHeadingTr {
+  position: sticky;
+  top: 0;
+}
+
+.mobileSummary {
+  display: none;
+}
+
+.summaryCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  border-radius: 1rem;
+  background: white;
+  overflow: hidden;
+}
+
+.summaryHeader {
+  width: 100%;
+  background: #5e9747;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.summaryHeader .arrow {
+  transition: transform 0.2s ease;
+}
+
+.summaryHeader .arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.summaryBody {
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryBody.open {
+  display: flex;
+}
+
+.summaryBody div {
+  font-size: 0.95rem;
+}
+
+/* PTO BOOK */
+.monthHeader td {
+  background-color: #3066ab !important;
+  color: white !important;
+  font-size: 1.1rem;
+  padding: 12px 1rem !important;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #1e3a5f;
+}
+
+.monthHeader td:hover {
+  background-color: #3066ab !important;
+}
+
+.dateCell,
+.hoursCell {
+  text-align: center;
+  display: table-cell;
+}
+
+input,
+#dateInput {
+  margin: 1rem 0;
+}
+
+.actions {
+  white-space: nowrap;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+
+/* PTO BOOK MOBILE */
+.mobilePtoBook {
+  display: none;
+}
+
+.ptoCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  border-radius: 1rem;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ptoMonthHeader {
+  background: #3066ab;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 2px solid #1e3a5f;
+}
+
+.ptoEntryCard {
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ptoEntryCard:last-child {
+  border-bottom: none;
+}
+
+.ptoCardRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.ptoCardRow strong {
+  color: #334155;
+  min-width: 80px;
+}
+
+.ptoCardRow span {
+  color: #1e293b;
+  text-align: right;
+  flex: 1;
+}
+
+.ptoCardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ptoCardActions button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.ptoEntryCard.editMode .ptoCardRow input,
+.ptoEntryCard.editMode .ptoCardRow select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  margin: 0;
+}
+
+/* ACCORDION (Past PTO)  */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.accordionHeader {
+  width: 100%;
+  background: #5e9747;
+  color: white;
+  border: none;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.accordionHeader:hover {
+  background: #4d7e39;
+}
+
+.accordionHeader::after {
+  content: "▼";
+  float: right;
+  transition: transform 0.2s;
+}
+
+.accordionHeader.open::after {
+  transform: rotate(180deg);
+}
+
+.accordionBody {
+  background: #ffffff;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #94a3b8;
+  border-radius: 0 0 8px 8px;
+}
+
+.historyRow {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.historyRow:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 600px) {
+  .tabBtn,
+  .logoutBtnDesktop {
+    display: none;
+  }
+
+  /* Employees */
+  #employeeTable {
+    display: none;
+  }
+
+  .mobileEmployees {
+    display: block;
+  }
+
+  #addEmployeeForm {
+    background: white;
+    padding: 20px;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+  }
+
+  #employees h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  /* PTO Book */
+  #upcomingTable {
+    display: none;
+  }
+
+  .mobilePtoBook {
+    display: block;
+  }
+
+  #upcoming h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Summary & Policy */
+  #policyTable,
+  #summaryTable {
+    display: none;
+  }
+
+  .mobilePolicy,
+  .mobileSummary {
+    display: block;
+  }
+
+  .policyHeader {
+    font-size: 1.1rem;
+  }
+}

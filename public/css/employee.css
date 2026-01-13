@@ -1,0 +1,206 @@
+#ptoOverview {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 2rem;
+  max-width: 400px;
+  margin: 2rem auto;
+  text-align: center;
+  transition: all 0.3s ease;
+  align-content: center;
+}
+
+#ptoOverview:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+#ptoOverview h3 {
+  font-size: 1.4rem;
+  color: #1e293b;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid #3b82f6;
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+#ptoOverview p {
+  font-size: 1.1rem;
+  margin: 0.75rem 0;
+  color: #334155;
+}
+
+#ptoOverview span {
+  display: inline-block;
+  min-width: 40px;
+  font-weight: 600;
+  color: #0f172a;
+  background-color: #eff6ff;
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.6rem;
+}
+
+#totalPto {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+#usedPto {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+#remainingPto {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* HISTORY SECTIONS */
+.ptoHistory,
+.currentPtoPolicy,
+.ptoNote {
+  margin: 15px;
+}
+
+#historyTableContainer {
+  margin-top: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding: 1rem 1rem 0 1rem;
+}
+
+/* HOLIDAYS */
+#holidays {
+  display: flex;
+}
+
+#holidays div {
+  width: 100%;
+  padding: 0 2rem;
+  gap: 0;
+}
+
+#holidaysBoxTwo {
+  display: grid;
+  margin: 0 2rem 0 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  position: relative;
+  list-style: none;
+  text-align: center;
+}
+
+ul::before {
+  content: "";
+  width: 0.5rem;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  background: #262d3c;
+  z-index: -1;
+}
+
+li {
+  padding: 1rem 1.5rem 1rem;
+  border-radius: 1rem;
+  background: #5e9747;
+  color: #f7f3f3;
+  font-weight: bold;
+}
+
+li + li {
+  margin-top: 0.5rem;
+}
+
+/* POLICY CARDS (Mobile) */
+.mobilePolicy {
+  display: none;
+}
+
+.policyCard {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 10px;
+  border-radius: 1rem;
+  background: white;
+  overflow: hidden;
+}
+
+.policyHeader {
+  width: 100%;
+  background: #5e9747;
+  color: white;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.arrowEmployee {
+  right: 7%;
+  position: absolute;
+  margin-top: 5px;
+}
+
+.policyBody {
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.policyBody.open {
+  display: flex;
+}
+
+.policyBody label {
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.policyBody input {
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.policyBody button {
+  margin-top: 10px;
+  padding: 10px;
+  color: white;
+  border: none;
+}
+
+@media (max-width: 600px) {
+  #policyTable {
+    display: none;
+  }
+
+  .mobilePolicy {
+    display: block;
+  }
+
+  .policyHeader {
+    font-size: 1.1rem;
+  }
+
+  #holidays {
+    display: grid;
+  }
+
+  #holidays div {
+    width: 100%;
+    padding: 0;
+  }
+}

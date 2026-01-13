@@ -409,6 +409,11 @@ input,
   border-bottom: none;
 }
 
+/* PTO Book */
+#upcomingTable tbody {
+  box-shadow: 0px 0px 49px 0px rgba(0, 0, 0, 0.17);
+}
+
 @media (max-width: 600px) {
   .tabBtn,
   .logoutBtnDesktop {

@@ -125,25 +125,28 @@ async function loadEmployees() {
     });
 
     // Desktop table row
-    tbody.innerHTML += `
-      <tr data-id="${emp.id}" data-role="${emp.role}" data-inactive="${emp.inactive}">
-        <td class="nameCell">
-          <span class="nameDisplay">${emp.full_name}</span>
-          <input type="text" class="nameInput hidden" value="${emp.full_name}" />
-        </td>
-        <td class="usernameCell">
-          <span class="usernameDisplay">${emp.username}</span>
-          <input type="text" class="usernameInput hidden" value="${emp.username}" />
-        </td>
-        <td>${formattedDate}</td>
-        <td class="actions">
-          <button class="editEmployeeBtn" data-id="${emp.id}">Edit</button>
-          <button class="saveEmployeeBtn hidden" data-id="${emp.id}">Save</button>
-          <button class="resetPasswordBtn hidden" data-id="${emp.id}">Reset Password</button> 
-          <button class="cancelEmployeeBtn hidden" data-id="${emp.id}">Cancel</button>
-        </td>
-      </tr>
+    const row = document.createElement("tr");
+    row.dataset.id = emp.id;
+    row.dataset.role = emp.role;
+    row.dataset.inactive = emp.inactive;
+    row.innerHTML = `
+      <td class="nameCell">
+        <span class="nameDisplay">${emp.full_name}</span>
+        <input type="text" class="nameInput hidden" value="${emp.full_name}" />
+      </td>
+      <td class="usernameCell">
+        <span class="usernameDisplay">${emp.username}</span>
+        <input type="text" class="usernameInput hidden" value="${emp.username}" />
+      </td>
+      <td>${formattedDate}</td>
+      <td class="actions">
+        <button class="editEmployeeBtn" data-id="${emp.id}">Edit</button>
+        <button class="saveEmployeeBtn hidden" data-id="${emp.id}">Save</button>
+        <button class="resetPasswordBtn hidden" data-id="${emp.id}">Reset Password</button> 
+        <button class="cancelEmployeeBtn hidden" data-id="${emp.id}">Cancel</button>
+      </td>
     `;
+    tbody.appendChild(row);
 
     // Mobile card
     const employeeCard = document.createElement("div");
@@ -282,140 +285,140 @@ function attachEmployeeEventListeners() {
 }
 
 function enterEmployeeEditMode(container) {
-  // Hide display spans, show input fields
-  container.querySelectorAll(".nameDisplay, .usernameDisplay").forEach((el) => {
-    el.classList.add("hidden");
-  });
-  container.querySelectorAll(".nameInput, .usernameInput").forEach((el) => {
-    el.classList.remove("hidden");
-  });
+  const isDesktop = container.tagName === "TR";
 
-  // Show checkboxes
-  const checkboxRow = container.querySelector(".employeeCheckboxRow");
-  if (checkboxRow) {
-    checkboxRow.classList.remove("hidden");
-  }
+  if (isDesktop) {
+    // DESKTOP LOGIC
+    const role = container.dataset.role;
+    const inactive = container.dataset.inactive === "1";
 
-  // Toggle buttons
-  container.querySelector(".editEmployeeBtn").classList.add("hidden");
-  container
-    .querySelectorAll(".saveEmployeeBtn, .resetPasswordBtn, .cancelEmployeeBtn")
-    .forEach((el) => {
+    // Hide display elements and show input fields
+    container.querySelector(".nameDisplay").classList.add("hidden");
+    container.querySelector(".nameInput").classList.remove("hidden");
+    container.querySelector(".usernameDisplay").classList.add("hidden");
+    container.querySelector(".usernameInput").classList.remove("hidden");
+
+    // Insert checkbox columns before actions column
+    const actionsCell = container.querySelector(".actions");
+
+    // Admin checkbox cell
+    const adminCell = document.createElement("td");
+    adminCell.className = "checkboxCell";
+    adminCell.innerHTML = `
+      <label class="checkboxLabel">
+        <input type="checkbox" class="adminCheckbox" ${
+          role === "admin" ? "checked" : ""
+        } />
+        <span>Admin</span>
+      </label>
+    `;
+    actionsCell.parentNode.insertBefore(adminCell, actionsCell);
+
+    // Inactive checkbox cell
+    const inactiveCell = document.createElement("td");
+    inactiveCell.className = "checkboxCell";
+    inactiveCell.innerHTML = `
+      <label class="checkboxLabel">
+        <input type="checkbox" class="inactiveCheckbox" ${
+          inactive ? "checked" : ""
+        } />
+        <span>Inactive</span>
+      </label>
+    `;
+    actionsCell.parentNode.insertBefore(inactiveCell, actionsCell);
+
+    // Toggle buttons
+    container.querySelector(".editEmployeeBtn").classList.add("hidden");
+    container.querySelector(".saveEmployeeBtn").classList.remove("hidden");
+    container.querySelector(".cancelEmployeeBtn").classList.remove("hidden");
+    container.querySelector(".resetPasswordBtn").classList.remove("hidden");
+  } else {
+    // MOBILE LOGIC
+    // Hide display spans, show input fields
+    container
+      .querySelectorAll(".nameDisplay, .usernameDisplay")
+      .forEach((el) => {
+        el.classList.add("hidden");
+      });
+    container.querySelectorAll(".nameInput, .usernameInput").forEach((el) => {
       el.classList.remove("hidden");
     });
 
-  // Add editMode class for mobile styling
-  if (container.classList.contains("employeeCard")) {
+    // Show checkboxes
+    const checkboxRow = container.querySelector(".employeeCheckboxRow");
+    if (checkboxRow) {
+      checkboxRow.classList.remove("hidden");
+    }
+
+    // Toggle buttons
+    container.querySelector(".editEmployeeBtn").classList.add("hidden");
+    container
+      .querySelectorAll(
+        ".saveEmployeeBtn, .resetPasswordBtn, .cancelEmployeeBtn"
+      )
+      .forEach((el) => {
+        el.classList.remove("hidden");
+      });
+
+    // Add editMode class for mobile styling
     container.classList.add("editMode");
   }
 }
 
 function exitEmployeeEditMode(container) {
-  // Show display spans, hide input fields
-  container.querySelectorAll(".nameDisplay, .usernameDisplay").forEach((el) => {
-    el.classList.remove("hidden");
-  });
-  container.querySelectorAll(".nameInput, .usernameInput").forEach((el) => {
-    el.classList.add("hidden");
-  });
+  const isDesktop = container.tagName === "TR";
 
-  // Hide checkboxes
-  const checkboxRow = container.querySelector(".employeeCheckboxRow");
-  if (checkboxRow) {
-    checkboxRow.classList.add("hidden");
-  }
+  if (isDesktop) {
+    // DESKTOP LOGIC
+    // Show display elements and hide input fields
+    container.querySelector(".nameDisplay").classList.remove("hidden");
+    container.querySelector(".nameInput").classList.add("hidden");
+    container.querySelector(".usernameDisplay").classList.remove("hidden");
+    container.querySelector(".usernameInput").classList.add("hidden");
 
-  // Toggle buttons
-  container.querySelector(".editEmployeeBtn").classList.remove("hidden");
-  container
-    .querySelectorAll(".saveEmployeeBtn, .resetPasswordBtn, .cancelEmployeeBtn")
-    .forEach((el) => {
+    // Remove checkbox cells
+    container.querySelectorAll(".checkboxCell").forEach((cell) => {
+      cell.remove();
+    });
+
+    // Toggle buttons
+    container.querySelector(".editEmployeeBtn").classList.remove("hidden");
+    container.querySelector(".saveEmployeeBtn").classList.add("hidden");
+    container.querySelector(".cancelEmployeeBtn").classList.add("hidden");
+    container.querySelector(".resetPasswordBtn").classList.add("hidden");
+  } else {
+    // MOBILE LOGIC
+    // Show display spans, hide input fields
+    container
+      .querySelectorAll(".nameDisplay, .usernameDisplay")
+      .forEach((el) => {
+        el.classList.remove("hidden");
+      });
+    container.querySelectorAll(".nameInput, .usernameInput").forEach((el) => {
       el.classList.add("hidden");
     });
 
-  // Remove editMode class for mobile styling
-  if (container.classList.contains("employeeCard")) {
+    // Hide checkboxes
+    const checkboxRow = container.querySelector(".employeeCheckboxRow");
+    if (checkboxRow) {
+      checkboxRow.classList.add("hidden");
+    }
+
+    // Toggle buttons
+    container.querySelector(".editEmployeeBtn").classList.remove("hidden");
+    container
+      .querySelectorAll(
+        ".saveEmployeeBtn, .resetPasswordBtn, .cancelEmployeeBtn"
+      )
+      .forEach((el) => {
+        el.classList.add("hidden");
+      });
+
+    // Remove editMode class
     container.classList.remove("editMode");
   }
 
   // Reload to restore original values
-  loadEmployees();
-}
-function enterEmployeeEditMode(row) {
-  const role = row.dataset.role;
-  const inactive = row.dataset.inactive === "1";
-
-  // Hide display elements and show input fields
-  row.querySelector(".nameDisplay").classList.add("hidden");
-  row.querySelector(".nameInput").classList.remove("hidden");
-  row.querySelector(".usernameDisplay").classList.add("hidden");
-  row.querySelector(".usernameInput").classList.remove("hidden");
-
-  // Insert checkbox columns before actions column
-  const actionsCell = row.querySelector(".actions");
-
-  // Admin checkbox cell
-  const adminCell = document.createElement("td");
-  adminCell.className = "checkboxCell";
-  adminCell.innerHTML = `
-    <label class="checkboxLabel">
-      <input type="checkbox" class="adminCheckbox" ${
-        role === "admin" ? "checked" : ""
-      } />
-      <span>Admin</span>
-    </label>
-  `;
-  actionsCell.parentNode.insertBefore(adminCell, actionsCell);
-
-  // Inactive checkbox cell
-  const inactiveCell = document.createElement("td");
-  inactiveCell.className = "checkboxCell";
-  inactiveCell.innerHTML = `
-    <label class="checkboxLabel">
-      <input type="checkbox" class="inactiveCheckbox" ${
-        inactive ? "checked" : ""
-      } />
-      <span>Inactive</span>
-    </label>
-  `;
-  actionsCell.parentNode.insertBefore(inactiveCell, actionsCell);
-
-  // Show header columns
-  document.querySelectorAll(".editModeColumn").forEach((col) => {
-    col.classList.remove("hidden");
-  });
-
-  // Toggle buttons
-  row.querySelector(".editEmployeeBtn").classList.add("hidden");
-  row.querySelector(".saveEmployeeBtn").classList.remove("hidden");
-  row.querySelector(".cancelEmployeeBtn").classList.remove("hidden");
-  row.querySelector(".resetPasswordBtn").classList.remove("hidden");
-}
-
-function exitEmployeeEditMode(row) {
-  // Show display elements and hide input fields
-  row.querySelector(".nameDisplay").classList.remove("hidden");
-  row.querySelector(".nameInput").classList.add("hidden");
-  row.querySelector(".usernameDisplay").classList.remove("hidden");
-  row.querySelector(".usernameInput").classList.add("hidden");
-
-  // Remove checkbox cells
-  row.querySelectorAll(".checkboxCell").forEach((cell) => {
-    cell.remove();
-  });
-
-  // Hide header columns
-  document.querySelectorAll(".editModeColumn").forEach((col) => {
-    col.classList.add("hidden");
-  });
-
-  // Toggle buttons
-  row.querySelector(".editEmployeeBtn").classList.remove("hidden");
-  row.querySelector(".saveEmployeeBtn").classList.add("hidden");
-  row.querySelector(".cancelEmployeeBtn").classList.add("hidden");
-  row.querySelector(".resetPasswordBtn").classList.add("hidden");
-
-  // Reload to reset values
   loadEmployees();
 }
 // Add Employee
